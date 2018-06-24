@@ -15,18 +15,25 @@ public class FollowPlayer : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(player != null) {
 
-        transform.position = player.position + distance;
+            transform.position = player.position + distance;
 
-        angle = transform.rotation.eulerAngles.y; 
+            angle = transform.rotation.eulerAngles.y; 
         
-        transform.rotation = Quaternion.Slerp(transform.rotation, player.rotation, 0.1f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, player.rotation, 0.1f);
 
-        angle = transform.rotation.eulerAngles.y - angle;
+            angle = transform.rotation.eulerAngles.y - angle;
 
-        distance = Quaternion.AngleAxis(angle, Vector3.up) * distance;
+            distance = Quaternion.AngleAxis(angle, Vector3.up) * distance;
+        }
     }
 
+    // source: https://answers.unity.com/questions/1157437/making-my-camera-follow-player-in-multiplayer.html
+    public void setTarget(Transform target)
+     {
+         player = target;
+     }
     
 
 
