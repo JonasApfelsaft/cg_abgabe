@@ -525,6 +525,17 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114179741865034542, guid: 6382af4219a7b43cc9cfee6423da9ac5,
+        type: 2}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 1434916046913626, guid: b96cb918135664dbbac170f754721b49,
+        type: 2}
+    - target: {fileID: 114179741865034542, guid: 6382af4219a7b43cc9cfee6423da9ac5,
+        type: 2}
+      propertyPath: numberOfEnemies
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6382af4219a7b43cc9cfee6423da9ac5, type: 2}
   m_IsPrefabParent: 0

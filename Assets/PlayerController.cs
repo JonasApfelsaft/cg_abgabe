@@ -11,6 +11,10 @@ public class PlayerController : NetworkBehaviour
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
 
+    // attempt to make splitting work for networking
+    // public GameObject splittedPlayerPrefab;  // public field for the split prefab
+    // public Transform splittedPlayerSpawn;    // public field for the location of split spawn
+
     Rigidbody rb;
     System.Random random = new System.Random();
 
@@ -22,7 +26,8 @@ public class PlayerController : NetworkBehaviour
 	
     void Update()
     {
-        
+        // isLocalPlayer returns true if this GameObject is the one that represents 
+        // the player on the local client.
         if (!isLocalPlayer)
         {
         	return;
@@ -60,25 +65,33 @@ public class PlayerController : NetworkBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            split(); 
+            CmdSplit(); 
         }
 
-        checkIfMerge(); 
+        CmdCheckIfMerge(); 
         
     }
 
-    void split()
+    // This command code is called on the client but run on the server
+    [Command]
+    void CmdSplit()
     {
+
         transform.localScale = transform.localScale / 2; 
-        GameObject playerClone = Instantiate(gameObject);        
+        GameObject playerClone = Instantiate(gameObject);
+        // Farbe der playerClone anpassen               
         playerClone.transform.Translate(transform.localScale.x, 0, 0);
         playerClone.tag="Clone";
         calculateSpeed(); 
         mergeTime=5.0f; 
 
+        // Spawn the playerClone on the Clients
+        NetworkServer.Spawn(playerClone);
     }
 
-    void checkIfMerge() 
+    // This command code is called on the client but run on the server
+    [Command]
+    void CmdCheckIfMerge() 
     {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
             merge(); 
