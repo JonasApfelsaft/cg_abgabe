@@ -9,13 +9,6 @@ public class PlayerController : NetworkBehaviour
 	float speed = 5.0F;
     float rotationSpeed = 65.0F;
     float slerpTime = 0.5f;
-    int xMin = -40;
-    int xMax = 40;
-    int yMin = 0; 
-    int yMax = 40; 
-    int zMin = -34;
-    int zMax = 36;
-
     float mergeTime = -1.0f;
 
     Rigidbody rb;
@@ -132,8 +125,11 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-    	GetComponent<MeshRenderer>().material.color = Color.blue;
-    	// source: https://answers.unity.com/questions/1157437/making-my-camera-follow-player-in-multiplayer.html
+    	// local player is blue so that client can identify their player object
+        GetComponent<MeshRenderer>().material.color = Color.blue;
+    	
+        // Camera
+        // source: https://answers.unity.com/questions/1157437/making-my-camera-follow-player-in-multiplayer.html
     	Camera.main.GetComponent<FollowPlayer>().setTarget(gameObject.transform);
     }
 
@@ -141,6 +137,7 @@ public class PlayerController : NetworkBehaviour
     {
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
+        // not working: 
         // adaptCameraOffset(1 + size); 
         // compiler error: Type `UnityEngine.Camera' does not contain a definition for `distance' 
         // and no extension method `distance' of type `UnityEngine.Camera' could be found. 
@@ -148,6 +145,7 @@ public class PlayerController : NetworkBehaviour
         calculateSpeed(); 
     }
 
+    // not working: 
     // private void adaptCameraOffset(float adaption)
     // {
     //    Vector3 adaptedDistance = new Vector3(camera.distance.x * adaption, camera.distance.y * adaption, camera.distance.z * adaption);

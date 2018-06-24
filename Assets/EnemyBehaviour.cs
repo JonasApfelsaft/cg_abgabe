@@ -16,7 +16,6 @@ public class EnemyBehaviour : MonoBehaviour
 
 
 
-
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>(); 
@@ -42,13 +41,10 @@ public class EnemyBehaviour : MonoBehaviour
         Vector3 finalPosition = hit.position;
         navMeshAgent.SetDestination(finalPosition);
 
-
         /*if (Vector3.Distance(transform.position, player.position) <= MaxDist)
         {
             //Here Call any function U want Like Shoot at here or something
         }*/
-
-
     }
 
     
