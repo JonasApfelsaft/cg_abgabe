@@ -142,6 +142,7 @@ public class PlayerController : NetworkBehaviour
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         // adaptCameraOffset(1 + size); 
+<<<<<<< HEAD
         // compiler error: Type `UnityEngine.Camera' does not contain a definition for `distance' 
         // and no extension method `distance' of type `UnityEngine.Camera' could be found. 
         // Are you missing an assembly reference?
@@ -154,4 +155,9 @@ public class PlayerController : NetworkBehaviour
     //    camera.distance = Vector3.Slerp(camera.distance, adaptedDistance, slerpTime);
     // }
 
+=======
+        calculateSpeed(); 
+    }
+
+>>>>>>> 3077cec0805dbc330318daa233ac632a0c20e03c
 }
