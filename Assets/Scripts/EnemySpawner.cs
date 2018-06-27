@@ -6,10 +6,13 @@ public class EnemySpawner : NetworkBehaviour {
 	public int numberOfEnemies;
 
 	public override void OnStartServer() {
+        createEnemy(numberOfEnemies);
+	}
 
-		for (int i = 0; i < numberOfEnemies; i++) {
+    public void createEnemy(int amount) {
+        for (int i = 0; i < amount; i++) {
 
-			var spawnPosition = new Vector3(
+            var spawnPosition = new Vector3(
                 Random.Range(-8.0f, 8.0f),
                 Random.Range(-8.0f, 8.0f),
                 Random.Range(-8.0f, 8.0f));
@@ -21,6 +24,6 @@ public class EnemySpawner : NetworkBehaviour {
 
             var enemy = (GameObject)Instantiate(enemyPrefab, spawnPosition, spawnRotation);
             NetworkServer.Spawn(enemy);
-		}
-	}
+        }
+    }
 }

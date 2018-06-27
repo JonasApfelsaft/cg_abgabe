@@ -6,10 +6,13 @@ public class LittleBlobSpawner : NetworkBehaviour {
 	public int numberOfLittleBlobs;
 
 	public override void OnStartServer() {
+        createLittleBlob(numberOfLittleBlobs);
+	}
 
-		for (int i = 0; i < numberOfLittleBlobs; i++) {
+    public void createLittleBlob(int amount) {
+        for (int i = 0; i < amount; i++) {
 
-			var spawnPosition = new Vector3(
+            var spawnPosition = new Vector3(
                 Random.Range(-8.0f, 8.0f),
                 Random.Range(-8.0f, 8.0f),
                 Random.Range(-8.0f, 8.0f));
@@ -21,6 +24,6 @@ public class LittleBlobSpawner : NetworkBehaviour {
 
             var littleBlob = (GameObject)Instantiate(littleBlobPrefab, spawnPosition, spawnRotation);
             NetworkServer.Spawn(littleBlob);
-		}
-	}
+        }
+    }
 }

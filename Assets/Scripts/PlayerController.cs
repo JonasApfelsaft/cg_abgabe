@@ -11,6 +11,10 @@ public class PlayerController : NetworkBehaviour
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
     FollowPlayer followPlayer; 
+    public GameObject enemySpawner; 
+    public GameObject littleBlobSpawner;  
+    EnemySpawner enemySpawnerScript; 
+    LittleBlobSpawner littleBlobSpawnerScript; 
 
     // attempt to make splitting work for networking
     // public GameObject splittedPlayerPrefab;  // public field for the split prefab
@@ -27,7 +31,8 @@ public class PlayerController : NetworkBehaviour
 	
     void Update()
     {
-        
+        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
         // isLocalPlayer returns true if this GameObject is the one that represents 
         // the player on the local client.
         if (!isLocalPlayer)
@@ -120,14 +125,14 @@ public class PlayerController : NetworkBehaviour
             other.gameObject.SetActive(false);
             //status.scoreKilledOtherPlayer(5);
             scaleUp(other.gameObject.transform.localScale.y*0.7f); 
-            // createEnemy(); 
+            enemySpawnerScript.createEnemy(1);  
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
             other.gameObject.SetActive(false);
             //status.scoreAbsorbedLittleBlob();
-            // createLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
+            littleBlobSpawnerScript.createLittleBlob(1);
         }  
         
     }
