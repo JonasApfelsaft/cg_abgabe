@@ -15,11 +15,7 @@ public class MainMenu : MonoBehaviour {
 	void Update () {
 		
 	}
-
-	public void startMainMenu(){
-		mainMenuUI.SetActive(true);
-	}
-
+	
 	public void hostGame(){
 		mainMenuUI.SetActive(false); 
 	}
