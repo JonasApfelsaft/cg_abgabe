@@ -10,6 +10,7 @@ public class PlayerController : NetworkBehaviour
     float rotationSpeed = 65.0F;
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
+    FollowPlayer followPlayer; 
 
     // attempt to make splitting work for networking
     // public GameObject splittedPlayerPrefab;  // public field for the split prefab
@@ -26,6 +27,7 @@ public class PlayerController : NetworkBehaviour
 	
     void Update()
     {
+        
         // isLocalPlayer returns true if this GameObject is the one that represents 
         // the player on the local client.
         if (!isLocalPlayer)
@@ -142,26 +144,21 @@ public class PlayerController : NetworkBehaviour
         GetComponent<MeshRenderer>().material.color = Color.blue;
     	
         // Camera
-        // source: https://answers.unity.com/questions/1157437/making-my-camera-follow-player-in-multiplayer.html
-    	Camera.main.GetComponent<FollowPlayer>().setTarget(gameObject.transform);
+        followPlayer = Camera.main.GetComponent<FollowPlayer>();
+    	followPlayer.player = gameObject.transform;
     }
 
     private void scaleUp(float size)
     {
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-        // not working: 
-        // adaptCameraOffset(1 + size); 
-        // compiler error: Type `UnityEngine.Camera' does not contain a definition for `distance' 
-        // and no extension method `distance' of type `UnityEngine.Camera' could be found. 
-        // Are you missing an assembly reference?
+        adaptCameraOffset(1 + size); 
         calculateSpeed(); 
     }
-
-    // not working: 
-    // private void adaptCameraOffset(float adaption)
-    // {
-    //    Vector3 adaptedDistance = new Vector3(camera.distance.x * adaption, camera.distance.y * adaption, camera.distance.z * adaption);
-    //    camera.distance = Vector3.Slerp(camera.distance, adaptedDistance, slerpTime);
-    // }
+ 
+    private void adaptCameraOffset(float adaption)
+    {
+        Vector3 adaptedDistance = new Vector3(followPlayer.distance.x * adaption, followPlayer.distance.y * adaption, followPlayer.distance.z * adaption);
+        followPlayer.distance = Vector3.Slerp(followPlayer.distance, adaptedDistance, slerpTime);
+     }
 }

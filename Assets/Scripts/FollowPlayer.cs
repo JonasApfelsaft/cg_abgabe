@@ -28,13 +28,4 @@ public class FollowPlayer : MonoBehaviour {
             distance = Quaternion.AngleAxis(angle, Vector3.up) * distance;
         }
     }
-
-    // source: https://answers.unity.com/questions/1157437/making-my-camera-follow-player-in-multiplayer.html
-    public void setTarget(Transform target)
-     {
-         player = target;
-     }
-    
-
-
 }
