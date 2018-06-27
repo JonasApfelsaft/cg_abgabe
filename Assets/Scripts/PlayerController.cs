@@ -122,10 +122,12 @@ public class PlayerController : NetworkBehaviour
     {
         if (other.gameObject.CompareTag("Collectable"))
         {
-            other.gameObject.SetActive(false);
-            //status.scoreKilledOtherPlayer(5);
-            scaleUp(other.gameObject.transform.localScale.y*0.7f); 
-            enemySpawnerScript.createEnemy(1);  
+            if(transform.localScale.x>other.transform.localScale.x){
+                other.gameObject.SetActive(false);
+                //status.scoreKilledOtherPlayer(5);
+                scaleUp(other.gameObject.transform.localScale.y*0.7f); 
+                enemySpawnerScript.createEnemy(1);  
+            }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
@@ -133,7 +135,18 @@ public class PlayerController : NetworkBehaviour
             //status.scoreAbsorbedLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
             littleBlobSpawnerScript.createLittleBlob(1);
-        }  
+        } 
+        else if (other.gameObject.CompareTag("Player"))
+        {
+            if(transform.localScale.x>other.transform.localScale.x){
+                //TO DO
+                //call method to let player know he died --> show menu with options respawn and exit
+                //other.getComponent<PlayerController>().died();
+                other.gameObject.SetActive(false);
+                scaleUp(other.gameObject.transform.localScale.y);
+            }
+            
+        }
         
     }
 
