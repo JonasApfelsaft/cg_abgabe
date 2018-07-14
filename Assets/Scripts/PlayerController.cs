@@ -57,14 +57,12 @@ public class PlayerController : NetworkBehaviour
         if (rot > 0) //turn right
         {
             transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-            rotateClones(0, rotationSpeed * Time.deltaTime, 0);
-            // translate clones so that they are in one row with player
+            rotateClones(rotationSpeed);
         }
         else if (rot < 0) //turn left   
         {
             transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-            rotateClones(0, -rotationSpeed * Time.deltaTime, 0);
-            // translate clones so that they are in one row with player
+            rotateClones(-rotationSpeed);
         }
 
         if(Input.GetKey(KeyCode.Z)) //move upwards
@@ -89,17 +87,19 @@ public class PlayerController : NetworkBehaviour
 
     private void translateClones(float x, float y, float z) {
         var clones = GameObject.FindGameObjectsWithTag("Clone");
-        
+
         for (int i = 0; i < clones.Length; i++) {
             clones[i].transform.Translate(x, y, z);
         }
     }
 
-    private void rotateClones(float x, float y, float z) {
+    private void rotateClones(float speed) {
         var clones = GameObject.FindGameObjectsWithTag("Clone");
+        var player = GameObject.FindWithTag("Player").transform;
         
         for (int i = 0; i < clones.Length; i++) {
-            clones[i].transform.Rotate(x, y, z);
+            // rotate clone around original player which is the object on the left of the row
+            clones[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
         }
     }
 
@@ -205,11 +205,28 @@ public class PlayerController : NetworkBehaviour
 
     private void scaleUp(float size)
     {
-        // TODO wer hat es gegessen von den clones?
-        Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
+        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        
+        // relative size which each element of player is supposed to scale up by
+        // size shall be distributed in an even way on alle elements
+        int amountOfPlayerElements = clones.Length + 1;
+        float relativeSize = size / amountOfPlayerElements;
+
+        Vector3 newScale = new Vector3(transform.localScale.x + relativeSize, transform.localScale.y + relativeSize, transform.localScale.z + relativeSize);
+        
+        // scale up player
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-        adaptCameraOffset(1 + size); 
-        calculateSpeed(); // TODO auf allen speed kalkulieren
+
+        // scale up clones
+        for (int i = 0; i < clones.Length; i++) {
+            clones[i].transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
+        }
+        
+        // Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
+        // transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
+
+        adaptCameraOffset(1 + relativeSize); 
+        calculateSpeed();
     }
  
     private void adaptCameraOffset(float adaption)
