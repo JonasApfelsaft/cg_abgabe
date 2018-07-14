@@ -6,8 +6,8 @@ using UnityEngine.Networking;
 
 public class PlayerController : NetworkBehaviour
 {
-	float speed = 5.0F;
-    float rotationSpeed = 65.0F;
+	float speed = 5.0f;
+    float rotationSpeed = 65.0f;
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
     FollowPlayer followPlayer; 
@@ -46,28 +46,36 @@ public class PlayerController : NetworkBehaviour
         if (translation > 0) //move forwards
         {
             transform.Translate(0, 0, speed * Time.deltaTime);
+            translateClones(0, 0, speed * Time.deltaTime);
         }
         else if (translation < 0) //move backwards
         {
             transform.Translate(0, 0, -speed * Time.deltaTime);
+            translateClones(0, 0, -speed * Time.deltaTime);
         }
 
         if (rot > 0) //turn right
         {
             transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+            rotateClones(0, rotationSpeed * Time.deltaTime, 0);
+            // translate clones so that they are in one row with player
         }
         else if (rot < 0) //turn left   
         {
             transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+            rotateClones(0, -rotationSpeed * Time.deltaTime, 0);
+            // translate clones so that they are in one row with player
         }
 
         if(Input.GetKey(KeyCode.Z)) //move upwards
         {
             transform.Translate(0, speed / 2 * Time.deltaTime, 0);
+            translateClones(0, speed / 2 * Time.deltaTime, 0);
         }
         else if (Input.GetKey(KeyCode.H)) //move downwards
         {
             transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
+            translateClones(0, -speed / 2 * Time.deltaTime, 0);
         }
 
         if(Input.GetKeyDown(KeyCode.Space))
@@ -79,25 +87,54 @@ public class PlayerController : NetworkBehaviour
         
     }
 
-    // This command code is called on the client but run on the server
-    [Command]
+    private void translateClones(float x, float y, float z) {
+        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        
+        for (int i = 0; i < clones.Length; i++) {
+            clones[i].transform.Translate(x, y, z);
+        }
+    }
+
+    private void rotateClones(float x, float y, float z) {
+        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        
+        for (int i = 0; i < clones.Length; i++) {
+            clones[i].transform.Rotate(x, y, z);
+        }
+    }
+
+    // TODO make split for clients work for networking
     void CmdSplit()
     {
+        var currentClones = GameObject.FindGameObjectsWithTag("Clone");
 
-        transform.localScale = transform.localScale / 2; 
-        GameObject playerClone = Instantiate(gameObject);
-        // Farbe der playerClone anpassen               
-        playerClone.transform.Translate(transform.localScale.x, 0, 0);
-        playerClone.tag="Clone";
-        calculateSpeed(); 
-        mergeTime=5.0f; 
+        // Scale player
+        transform.localScale = transform.localScale / 2;
+        // Scale clones
+        for (int i = 0; i < currentClones.Length; i++) {
+            currentClones[i].transform.localScale = currentClones[i].transform.localScale / 2;
+            // position current clones
+            currentClones[i].transform.Translate(-transform.localScale.x * (i + 1), 0, 0);
+        }
+        
+        var xOffsetNewClones = (currentClones.Length + 1) * transform.localScale.x;
+        // Instantiate new clones (one per current clone + player)
+        for (int i = 0; i < currentClones.Length + 1; i++) {
+            GameObject newClone = Instantiate(gameObject);
+            newClone.tag = "Clone";
+            // position new clones
+            newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
 
-        // Spawn the playerClone on the Clients
-        NetworkServer.Spawn(playerClone);
+            // Spawn the newClone on the Clients
+            NetworkServer.Spawn(newClone);
+        }
+
+        calculateSpeed();
+        mergeTime = 5.0f;
     }
 
     // This command code is called on the client but run on the server
-    [Command]
+    // [Command]
     void CmdCheckIfMerge() 
     {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
@@ -109,7 +146,7 @@ public class PlayerController : NetworkBehaviour
     
     void merge(){
         var clones = GameObject.FindGameObjectsWithTag("Clone"); 
-        for(int i =0; i<clones.Length; i++){
+        for(int i = 0; i < clones.Length; i++){
             transform.localScale = transform.localScale + clones[i].transform.localScale; 
             Destroy(clones[i]); 
         }
@@ -168,10 +205,11 @@ public class PlayerController : NetworkBehaviour
 
     private void scaleUp(float size)
     {
+        // TODO wer hat es gegessen von den clones?
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         adaptCameraOffset(1 + size); 
-        calculateSpeed(); 
+        calculateSpeed(); // TODO auf allen speed kalkulieren
     }
  
     private void adaptCameraOffset(float adaption)
