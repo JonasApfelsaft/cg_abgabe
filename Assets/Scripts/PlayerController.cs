@@ -207,27 +207,11 @@ public class PlayerController : NetworkBehaviour
 
     private void scaleUp(float size)
     {
-        var clones = GameObject.FindGameObjectsWithTag("Clone");
-        
-        // relative size which each element of player is supposed to scale up by
-        // size shall be distributed in an even way on alle elements
-        int amountOfPlayerElements = clones.Length + 1;
-        float relativeSize = size / amountOfPlayerElements;
-
-        Vector3 newScale = new Vector3(transform.localScale.x + relativeSize, transform.localScale.y + relativeSize, transform.localScale.z + relativeSize);
-        
         // scale up player
+        Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-
-        // scale up clones
-        for (int i = 0; i < clones.Length; i++) {
-            clones[i].transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-        }
         
-        // Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
-        // transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-
-        adaptCameraOffset(1 + relativeSize); 
+        adaptCameraOffset(1 + size); 
         calculateSpeed();
     }
  
