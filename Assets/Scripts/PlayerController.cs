@@ -201,6 +201,8 @@ public class PlayerController : NetworkBehaviour
         // Camera
         followPlayer = Camera.main.GetComponent<FollowPlayer>();
     	followPlayer.player = gameObject.transform;
+        MinimapScript minimapCam = GameObject.FindGameObjectWithTag("minimapCam").GetComponent<MinimapScript>(); 
+        minimapCam.player = gameObject; 
     }
 
     private void scaleUp(float size)
