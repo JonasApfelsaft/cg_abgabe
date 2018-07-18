@@ -61,9 +61,11 @@
      <Compile Include="Assets\Scripts\LittleBlobSpawner.cs" />
      <Compile Include="Assets\Scripts\LostMenu.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
+     <Compile Include="Assets\Scripts\MinimapScript.cs" />
      <Compile Include="Assets\Scripts\PauseMenu.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+     <Compile Include="Assets\Scripts\PlayerSplitController.cs" />
      <None Include="Assets\Earth\Readme.txt" />
      <None Include="Assets\Earth\Materials\EarthShader.shader" />
  <Reference Include="UnityEditor.StandardEvents">

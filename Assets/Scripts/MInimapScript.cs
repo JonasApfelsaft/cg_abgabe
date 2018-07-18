@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MInimapScript : MonoBehaviour {
+public class MinimapScript : MonoBehaviour {
 
-	private GameObject player; 
+	public GameObject player; 
 	private Camera minimapCam; 
 
 	// Use this for initialization
@@ -16,7 +16,7 @@ public class MInimapScript : MonoBehaviour {
 	// Update is called once per frame
 	void LateUpdate () {
 		if(player == null){
-			player = GameObject.FindGameObjectWithTag("Player"); 
+			//player = GameObject.FindGameObjectWithTag("Player"); 
 		} else {
 			Vector3 newPosition = player.transform.position; 
 			newPosition.y = transform.position.y; 
