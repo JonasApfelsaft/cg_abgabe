@@ -13,7 +13,7 @@ public class LostMenu : MonoBehaviour {
 
 	public void respawn(){
 
-		//TO DO 
+		//TODO:
 		//respawn 
 
 		lostMenuUI.SetActive(false); 
@@ -22,7 +22,7 @@ public class LostMenu : MonoBehaviour {
 	public void backToMainMenu(){
 		lostMenuUI.SetActive(false); 
 
-		//TO DO 
+		//TODO:
 		//spiel beenden !!!! 
 
 		mainMenuUI.SetActive(true);

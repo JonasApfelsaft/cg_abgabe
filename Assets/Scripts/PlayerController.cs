@@ -32,57 +32,62 @@ public class PlayerController : NetworkBehaviour
     
     void Update()
     {
-        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
-        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
+        if(transform.localScale.x<9){
+            enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
+            littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
         // isLocalPlayer returns true if this GameObject is the one that represents 
         // the player on the local client.
-        if (!isLocalPlayer)
-        {
-            return;
-        }
+            if (!isLocalPlayer)
+            {
+                return;
+            }
 
-        float translation = Input.GetAxis("Vertical");
-        float rot = Input.GetAxis("Horizontal");
+            float translation = Input.GetAxis("Vertical");
+            float rot = Input.GetAxis("Horizontal");
 
-        if (translation > 0) //move forwards
-        {
-            transform.Translate(0, 0, speed * Time.deltaTime);
-            translateClones(0, 0, speed * Time.deltaTime);
-        }
-        else if (translation < 0) //move backwards
-        {
-            transform.Translate(0, 0, -speed * Time.deltaTime);
-            translateClones(0, 0, -speed * Time.deltaTime);
-        }
+            if (translation > 0) //move forwards
+            {
+                transform.Translate(0, 0, speed * Time.deltaTime);
+                translateClones(0, 0, speed * Time.deltaTime);
+            }
+            else if (translation < 0) //move backwards
+            {
+                transform.Translate(0, 0, -speed * Time.deltaTime);
+                translateClones(0, 0, -speed * Time.deltaTime);
+            }
 
-        if (rot > 0) //turn right
-        {
-            transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-            rotateClones(rotationSpeed);
-        }
-        else if (rot < 0) //turn left   
-        {
-            transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-            rotateClones(-rotationSpeed);
-        }
+            if (rot > 0) //turn right
+            {
+                transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+                rotateClones(rotationSpeed);
+            }
+            else if (rot < 0) //turn left   
+            {
+                transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+                rotateClones(-rotationSpeed);
+            }
 
-        if(Input.GetKey(KeyCode.Z)) //move upwards
-        {
-            transform.Translate(0, speed / 2 * Time.deltaTime, 0);
-            translateClones(0, speed / 2 * Time.deltaTime, 0);
-        }
-        else if (Input.GetKey(KeyCode.H)) //move downwards
-        {
-            transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
-            translateClones(0, -speed / 2 * Time.deltaTime, 0);
-        }
+            if(Input.GetKey(KeyCode.Z)) //move upwards
+            {
+                transform.Translate(0, speed / 2 * Time.deltaTime, 0);
+                translateClones(0, speed / 2 * Time.deltaTime, 0);
+            }
+            else if (Input.GetKey(KeyCode.H)) //move downwards
+            {
+                transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
+                translateClones(0, -speed / 2 * Time.deltaTime, 0);
+            }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            split(); 
-        }
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                split(); 
+            }
 
-        checkIfMerge(); 
+            checkIfMerge(); 
+        } else {
+            won();
+        }
+        
         
     }
 
@@ -228,7 +233,7 @@ public class PlayerController : NetworkBehaviour
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         
-        adaptCameraOffset(1 + size); 
+        adaptCameraOffset(1 + (size/4)); 
         calculateSpeed();
     }
  
@@ -236,5 +241,9 @@ public class PlayerController : NetworkBehaviour
     {
         Vector3 adaptedDistance = new Vector3(followPlayer.distance.x * adaption, followPlayer.distance.y * adaption, followPlayer.distance.z * adaption);
         followPlayer.distance = Vector3.Slerp(followPlayer.distance, adaptedDistance, slerpTime);
-     }
+    }
+
+    private void won(){
+        //TODO: Tell player that he won
+    }
 }

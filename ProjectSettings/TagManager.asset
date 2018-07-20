@@ -9,6 +9,7 @@ TagManager:
   - Clone
   - minimapCam
   - minimap
+  - lostMenu
   layers:
   - Default
   - TransparentFX
