@@ -10,6 +10,7 @@ TagManager:
   - minimapCam
   - minimap
   - lostMenu
+  - Canvas
   layers:
   - Default
   - TransparentFX
