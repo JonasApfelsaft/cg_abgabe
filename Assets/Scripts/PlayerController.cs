@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine; 
 using System;
@@ -6,19 +6,20 @@ using UnityEngine.Networking;
 
 public class PlayerController : NetworkBehaviour
 {
-	float speed = 5.0f;
+    float speed = 5.0f;
     float rotationSpeed = 65.0f;
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
     FollowPlayer followPlayer; 
     public GameObject enemySpawner; 
-    public GameObject littleBlobSpawner;  
+    public GameObject littleBlobSpawner; 
+ 
     EnemySpawner enemySpawnerScript; 
     LittleBlobSpawner littleBlobSpawnerScript; 
-
+    
     // attempt to make splitting work for networking
-    // public GameObject splittedPlayerPrefab;  // public field for the split prefab
-    // public Transform splittedPlayerSpawn;    // public field for the location of split spawn
+    public GameObject playerSplitPrefab;
+    List<GameObject> playerSplits = new List<GameObject>();
 
     Rigidbody rb;
     System.Random random = new System.Random();
@@ -28,7 +29,7 @@ public class PlayerController : NetworkBehaviour
         rb = GetComponent<Rigidbody>();
     }
     
-	
+    
     void Update()
     {
         enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
@@ -37,7 +38,7 @@ public class PlayerController : NetworkBehaviour
         // the player on the local client.
         if (!isLocalPlayer)
         {
-        	return;
+            return;
         }
 
         float translation = Input.GetAxis("Vertical");
@@ -78,55 +79,67 @@ public class PlayerController : NetworkBehaviour
 
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            CmdSplit(); 
+            split(); 
         }
 
-        CmdCheckIfMerge(); 
+        checkIfMerge(); 
         
     }
 
     private void translateClones(float x, float y, float z) {
-        var clones = GameObject.FindGameObjectsWithTag("Clone");
-
-        for (int i = 0; i < clones.Length; i++) {
-            clones[i].transform.Translate(x, y, z);
+        for (int i = 0; i < playerSplits.Count; i++) {
+            playerSplits[i].transform.Translate(x, y, z);
         }
     }
 
     private void rotateClones(float speed) {
-        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        // TODO muss aber eigener Player sein und nicht alle mit Tag Player
         var player = GameObject.FindWithTag("Player").transform;
         
-        for (int i = 0; i < clones.Length; i++) {
+        for (int i = 0; i < playerSplits.Count; i++) {
             // rotate clone around original player which is the object on the left of the row
-            clones[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
+            playerSplits[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
         }
     }
 
     // TODO make split for clients work for networking
-    void CmdSplit()
+    void split()
     {
-        var currentClones = GameObject.FindGameObjectsWithTag("Clone");
-
         // Scale player
         transform.localScale = transform.localScale / 2;
-        // Scale clones
-        for (int i = 0; i < currentClones.Length; i++) {
-            currentClones[i].transform.localScale = currentClones[i].transform.localScale / 2;
+
+        // Scale current splits
+        for (int i = 0; i < playerSplits.Count; i++) {
+            playerSplits[i].transform.localScale = playerSplits[i].transform.localScale / 2;
             // position current clones
-            currentClones[i].transform.Translate(-transform.localScale.x * (i + 1), 0, 0);
+            playerSplits[i].transform.Translate(-transform.localScale.x * (i + 1), 0, 0);
         }
         
-        var xOffsetNewClones = (currentClones.Length + 1) * transform.localScale.x;
-        // Instantiate new clones (one per current clone + player)
-        for (int i = 0; i < currentClones.Length + 1; i++) {
-            GameObject newClone = Instantiate(gameObject);
-            newClone.tag = "Clone";
-            // position new clones
-            newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
+        // save temporary amount of current splits from list
+        var currentPlayerSplits = playerSplits.Count;
 
-            // Spawn the newClone on the Clients
-            NetworkServer.Spawn(newClone);
+        // save current position of player
+        Vector3 spawnPosition = transform.position;
+
+        var xOffsetNewSplits = (currentPlayerSplits + 1) * transform.localScale.x;
+        
+        // Instantiate new splits (one per current split + player)
+        for (int i = 0; i < currentPlayerSplits + 1; i++) {
+            // newSplit has initial size of prefab
+            GameObject newSplit = Instantiate(playerSplitPrefab, spawnPosition, transform.rotation);
+            // therefor: assign size of split to current size of player
+            newSplit.transform.localScale = transform.localScale;
+
+            newSplit.GetComponent<MeshRenderer>().material.color = Color.blue;
+
+            // add new split to list
+            playerSplits.Add(newSplit);
+
+            // position new split
+            newSplit.transform.Translate(xOffsetNewSplits + transform.localScale.x * i, 0, 0);
+            
+            // Spawn the newSplit on the Clients
+            NetworkServer.Spawn(newSplit);
         }
 
         calculateSpeed();
@@ -135,7 +148,7 @@ public class PlayerController : NetworkBehaviour
 
     // This command code is called on the client but run on the server
     // [Command]
-    void CmdCheckIfMerge() 
+    void checkIfMerge() 
     {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
             merge(); 
@@ -145,11 +158,13 @@ public class PlayerController : NetworkBehaviour
     }
     
     void merge(){
-        var clones = GameObject.FindGameObjectsWithTag("Clone"); 
-        for(int i = 0; i < clones.Length; i++){
-            transform.localScale = transform.localScale + clones[i].transform.localScale; 
-            Destroy(clones[i]); 
+        for(int i = 0; i < playerSplits.Count; i++){
+            transform.localScale = transform.localScale + playerSplits[i].transform.localScale; 
+            Destroy(playerSplits[i]);
         }
+        // remove all splits form the list
+        playerSplits.Clear();
+
         calculateSpeed(); 
 
         mergeTime=-1.0f; 
@@ -195,18 +210,20 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-    	// local player is blue so that client can identify their player object
+        // local player is blue so that client can identify their player object
         GetComponent<MeshRenderer>().material.color = Color.blue;
-    	
+        
         // Camera
         followPlayer = Camera.main.GetComponent<FollowPlayer>();
-    	followPlayer.player = gameObject.transform;
+        followPlayer.player = gameObject.transform;
         MinimapScript minimapCam = GameObject.FindGameObjectWithTag("minimapCam").GetComponent<MinimapScript>(); 
         minimapCam.player = gameObject; 
     }
 
     private void scaleUp(float size)
     {
+        // TODO: wenn split was isst, wird aber player groesser
+
         // scale up player
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
