@@ -5,46 +5,41 @@ using UnityEngine.AI;
 
 public class EnemyBehaviour : MonoBehaviour
 {
-    NavMeshAgent navMeshAgent; 
 
-    public Transform player;
-    int MoveSpeed = 2;
-    int MaxDist = 10;
-    int MinDist = 1;
-    int roamRadius = 50; 
-    System.Random random = new System.Random();
+    GameObject closestPlayer; 
+    GameObject[] players; 
+    float distOfClosest; 
+    Rigidbody rb;
+    float speed; 
 
 
 
     void Start()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>(); 
-        navMeshAgent.baseOffset = random.Next(0, 40); 
+        distOfClosest = 1000; 
+        players = GameObject.FindGameObjectsWithTag("Player"); 
+        rb = transform.gameObject.GetComponent<Rigidbody>(); 
+        speed = 2; 
     }
 
     void Update()
     {
-        /*transform.LookAt(player);
-        transform.rotation = Quaternion.AngleAxis(90, Vector3.up); 
 
-        if (Vector3.Distance(transform.position, player.position) >= MinDist)
+         players = GameObject.FindGameObjectsWithTag("Player"); 
+
+
+        foreach ( GameObject player in players)
         {
+            if(Vector3.Distance(transform.position, player.transform.position)<distOfClosest){
+                closestPlayer = player; 
+                distOfClosest = Vector3.Distance(transform.position, player.transform.position);
+                Debug.Log(Vector3.Distance(transform.position, player.transform.position)); 
+            }
+        }
+        if(closestPlayer!=null){
+            transform.position = Vector3.MoveTowards(transform.position, closestPlayer.transform.position, speed*Time.deltaTime); 
+        }
 
-            transform.position += transform.forward * MoveSpeed * Time.deltaTime;
-
-        }*/
-        
-        Vector3 randomDirection = Random.insideUnitSphere * roamRadius;
-        randomDirection += transform.position;
-        NavMeshHit hit;
-        NavMesh.SamplePosition(randomDirection, out hit, roamRadius, 1);
-        Vector3 finalPosition = hit.position;
-        navMeshAgent.SetDestination(finalPosition);
-
-        /*if (Vector3.Distance(transform.position, player.position) <= MaxDist)
-        {
-            //Here Call any function U want Like Shoot at here or something
-        }*/
     }
 
     
