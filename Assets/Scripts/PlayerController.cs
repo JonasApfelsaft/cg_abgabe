@@ -21,6 +21,10 @@ public class PlayerController : NetworkBehaviour
     public GameObject playerSplitPrefab;
     List<GameObject> playerSplits = new List<GameObject>();
 
+    // source: https://answers.unity.com/questions/1295543/how-do-i-network-sync-scaling-of-character.html
+    [SyncVar(hook = "OnSetScale")]
+    private Vector3 scale;
+
     Rigidbody rb;
     System.Random random = new System.Random();
 
@@ -32,63 +36,70 @@ public class PlayerController : NetworkBehaviour
     
     void Update()
     {
-        if(transform.localScale.x<9){
-            enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
-            littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
         // isLocalPlayer returns true if this GameObject is the one that represents 
         // the player on the local client.
-            if (!isLocalPlayer)
-            {
-                return;
-            }
-
-            float translation = Input.GetAxis("Vertical");
-            float rot = Input.GetAxis("Horizontal");
-
-            if (translation > 0) //move forwards
-            {
-                transform.Translate(0, 0, speed * Time.deltaTime);
-                translateClones(0, 0, speed * Time.deltaTime);
-            }
-            else if (translation < 0) //move backwards
-            {
-                transform.Translate(0, 0, -speed * Time.deltaTime);
-                translateClones(0, 0, -speed * Time.deltaTime);
-            }
-
-            if (rot > 0) //turn right
-            {
-                transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-                rotateClones(rotationSpeed);
-            }
-            else if (rot < 0) //turn left   
-            {
-                transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-                rotateClones(-rotationSpeed);
-            }
-
-            if(Input.GetKey(KeyCode.Z)) //move upwards
-            {
-                transform.Translate(0, speed / 2 * Time.deltaTime, 0);
-                translateClones(0, speed / 2 * Time.deltaTime, 0);
-            }
-            else if (Input.GetKey(KeyCode.H)) //move downwards
-            {
-                transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
-                translateClones(0, -speed / 2 * Time.deltaTime, 0);
-            }
-
-            if(Input.GetKeyDown(KeyCode.Space))
-            {
-                split(); 
-            }
-
-            checkIfMerge(); 
-        } else {
-            won();
+        if (!isLocalPlayer)
+        {
+            return;
         }
-        
-        
+
+        if (transform.localScale.x >= 9) {
+            won();
+            return;
+        }
+
+        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
+
+        float translation = Input.GetAxis("Vertical");
+        float rot = Input.GetAxis("Horizontal");
+
+        // movement: working for host, not working for client
+        if (translation > 0) //move forwards
+        {
+            CmdMoveForward();
+        }
+        else if (translation < 0) //move backwards
+        {
+            CmdMoveBackward();
+        }
+
+        if (rot > 0) //turn right
+        {
+            CmdTurnRight();
+        }
+        else if (rot < 0) //turn left   
+        {
+            CmdTurnLeft();
+        }
+
+        if(Input.GetKey(KeyCode.Z)) //move upwards
+        {
+            CmdMoveUp();
+        }
+        else if (Input.GetKey(KeyCode.H)) //move downwards
+        {
+            CmdMoveDown();
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            CmdSplit();
+        }
+
+        CmdCheckIfMerge();
+    }
+
+    // source: https://answers.unity.com/questions/1295543/how-do-i-network-sync-scaling-of-character.html
+    [Command]
+    public void CmdSetScale(Vector3 vec) {
+        this.scale = vec;
+    }
+
+    // source: https://answers.unity.com/questions/1295543/how-do-i-network-sync-scaling-of-character.html
+    private void OnSetScale(Vector3 vec) {
+     this.scale = vec;
+     this.transform.localScale = vec;    
     }
 
     private void translateClones(float x, float y, float z) {
@@ -107,15 +118,56 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    [Command]
+    void CmdMoveForward() {
+        transform.Translate(0, 0, speed * Time.deltaTime);
+        translateClones(0, 0, speed * Time.deltaTime);
+    }
+    
+    [Command]
+    void CmdMoveBackward() {
+        transform.Translate(0, 0, -speed * Time.deltaTime);
+        translateClones(0, 0, -speed * Time.deltaTime);
+    }
+
+    [Command]
+    void CmdTurnRight() {
+        transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+        rotateClones(rotationSpeed);        
+    }
+
+    [Command]
+    void CmdTurnLeft() {
+        transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+        rotateClones(-rotationSpeed);
+    }
+
+    [Command]
+    void CmdMoveUp() {
+        transform.Translate(0, speed / 2 * Time.deltaTime, 0);
+        translateClones(0, speed / 2 * Time.deltaTime, 0);
+    }
+
+    [Command]
+    void CmdMoveDown() {
+        transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
+        translateClones(0, -speed / 2 * Time.deltaTime, 0);
+    }
+
     // TODO make split for clients work for networking
-    void split()
+    [Command]
+    void CmdSplit()
     {
         // Scale player
-        transform.localScale = transform.localScale / 2;
+        // old / single player: transform.localScale = transform.localScale / 2;
+        // source: https://answers.unity.com/questions/1295543/how-do-i-network-sync-scaling-of-character.html
+        CmdSetScale(transform.localScale / 2);
 
         // Scale current splits
         for (int i = 0; i < playerSplits.Count; i++) {
+            // working for host, not working for client
             playerSplits[i].transform.localScale = playerSplits[i].transform.localScale / 2;
+  
             // position current clones
             playerSplits[i].transform.Translate(-transform.localScale.x * (i + 1), 0, 0);
         }
@@ -132,7 +184,7 @@ public class PlayerController : NetworkBehaviour
         for (int i = 0; i < currentPlayerSplits + 1; i++) {
             // newSplit has initial size of prefab
             GameObject newSplit = Instantiate(playerSplitPrefab, spawnPosition, transform.rotation);
-            // therefor: assign size of split to current size of player
+            // therefore: assign size of split to current size of player
             newSplit.transform.localScale = transform.localScale;
 
             newSplit.GetComponent<MeshRenderer>().material.color = Color.blue;
@@ -152,16 +204,16 @@ public class PlayerController : NetworkBehaviour
     }
 
     // This command code is called on the client but run on the server
-    // [Command]
-    void checkIfMerge() 
+    [Command]
+    void CmdCheckIfMerge()
     {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
             merge(); 
         } else if(mergeTime!=-1.0f){
-            mergeTime-=Time.deltaTime; 
+            mergeTime-=Time.deltaTime;
         }
     }
-    
+
     void merge(){
         for(int i = 0; i < playerSplits.Count; i++){
             transform.localScale = transform.localScale + playerSplits[i].transform.localScale; 
@@ -170,8 +222,7 @@ public class PlayerController : NetworkBehaviour
         // remove all splits form the list
         playerSplits.Clear();
 
-        calculateSpeed(); 
-
+        calculateSpeed();
         mergeTime=-1.0f; 
     }
 

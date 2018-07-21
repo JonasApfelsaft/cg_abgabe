@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.044414923, g: 0.041873932, b: 0.045860372, a: 1}
+  m_IndirectSpecularColor: {r: 0.043458275, g: 0.041858114, b: 0.04489567, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1118,7 +1118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45b452f0792774bdebf8590ab680e87e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
+  player: {fileID: 1130129248299768, guid: f22c37516eae14e68a68ae6d1cbeead6, type: 2}
 --- !u!1 &718527697
 GameObject:
   m_ObjectHideFlags: 0
@@ -1191,7 +1191,7 @@ MonoBehaviour:
   m_OfflineScene: 
   m_OnlineScene: 
   m_SpawnPrefabs:
-  - {fileID: 0}
+  - {fileID: 1833439839105294, guid: b96cb918135664dbbac170f754721b49, type: 2}
   - {fileID: 1748556116134920, guid: 3dbdc775d502941ceb21eb053d4db434, type: 2}
   - {fileID: 1015202115864314, guid: 252cf62fbceb6486ca168a271b77313d, type: 2}
   m_CustomConfig: 0
@@ -1441,7 +1441,7 @@ Prefab:
     - target: {fileID: 114179741865034542, guid: 6382af4219a7b43cc9cfee6423da9ac5,
         type: 2}
       propertyPath: numberOfEnemies
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6382af4219a7b43cc9cfee6423da9ac5, type: 2}
