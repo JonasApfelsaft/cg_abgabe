@@ -317,7 +317,7 @@ public class PlayerController : NetworkBehaviour
         // Camera
         followPlayer = Camera.main.GetComponent<FollowPlayer>();
         followPlayer.player = gameObject.transform;
-        MinimapScript minimapCam = GameObject.FindGameObjectWithTag("minimapCam").GetComponent<MinimapScript>(); 
+        Minimap minimapCam = GameObject.FindGameObjectWithTag("minimapCam").GetComponent<Minimap>(); 
         
         // TODO does not work any more
         minimapCam.player = gameObject;
