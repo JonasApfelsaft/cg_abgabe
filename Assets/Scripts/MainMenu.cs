@@ -1,15 +1,25 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; 
 using UnityEngine.Networking; 
 
 public class MainMenu : MonoBehaviour {
 
 	public GameObject mainMenuUI; 
 	public GameObject minimap; 
+	InputField inputField; 
+	private Text ipInput;
+	private int port; 
 
 	// Use this for initialization
 	void Start () {
+		inputField = GameObject.FindGameObjectWithTag("ipInput").GetComponent<InputField>();
+		//inputField.contentType = InputField.ContentType.IntegerNumber; 
+		ipInput = transform.Find("Text").gameObject.GetComponent<Text>(); 
+		//ipInput = inputField.GetComponent<Text>(); 
+		port = 3000; 
+		NetworkManager.singleton.networkPort = port; 
 		mainMenuUI.SetActive(true);
 		minimap = GameObject.FindGameObjectWithTag("minimap");
 		minimap.SetActive(false);
@@ -27,7 +37,13 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void joinGame(){
-		//NetworkManager.singleton.StartClient(); 
+		if(ipInput.text == null){
+			NetworkManager.singleton.networkAddress = "127.0.0.1"; 
+		} else {
+			NetworkManager.singleton.networkAddress = ipInput.text.ToString(); 
+		}
+		
+		NetworkManager.singleton.StartClient(); 
 		minimap.SetActive(true);
 		mainMenuUI.SetActive(false); 
 	}
