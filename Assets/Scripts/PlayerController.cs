@@ -29,6 +29,7 @@ public class PlayerController : NetworkBehaviour
 
     void Start () {
         rb = GetComponent<Rigidbody>();
+
     }
     
     void Update()
@@ -40,14 +41,13 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
+        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
+
         if (transform.localScale.x >= 9) {
             won();
             return;
         }
-
-        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
-        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
-  
 
         float translation = Input.GetAxis("Vertical");
         float rot = Input.GetAxis("Horizontal");
@@ -66,12 +66,12 @@ public class PlayerController : NetworkBehaviour
         if (rot > 0) //turn right
         {
             transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-            rotateSplits(rotationSpeed);  
+            CmdRotateSplits(rotationSpeed);  
         }
         else if (rot < 0) //turn left   
         {
             transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-            rotateSplits(-rotationSpeed);
+            CmdRotateSplits(-rotationSpeed);
         }
 
         if(Input.GetKey(KeyCode.Z)) //move upwards
@@ -104,8 +104,14 @@ public class PlayerController : NetworkBehaviour
             playerSplits[i].transform.Translate(x, y, z);
         }
     }
+    
+    [Command]
+    void CmdRotateSplits(float speed) {
+        RpcRotateSplits(speed);
+    }
 
-    void rotateSplits(float speed) {
+    [ClientRpc]
+    void RpcRotateSplits(float speed) {
         // TODO muss aber eigener Player sein und nicht alle mit Tag Player
         var player = GameObject.FindWithTag("Player").transform;
         

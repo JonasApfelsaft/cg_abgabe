@@ -9,19 +9,21 @@ public class PlayerSplitController : NetworkBehaviour {
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
     public GameObject enemySpawner; 
-    public GameObject littleBlobSpawner;  
+    public GameObject littleBlobSpawner; 
+
+
+    // start oder update...    public Vector3 scale = transform.localScale;
     
     EnemySpawner enemySpawnerScript; 
     LittleBlobSpawner littleBlobSpawnerScript; 
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 		
 	}
 
 	void OnTriggerEnter(Collider other)
