@@ -298,7 +298,7 @@ public class PlayerController : NetworkBehaviour
             else {
                 // player is dead
                 // lostMenuUI.SetActive(true);
-                RpcRespawn();
+                // RpcRespawn();
             }   
         }
     }
