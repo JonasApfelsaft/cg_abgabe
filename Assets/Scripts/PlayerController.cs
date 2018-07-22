@@ -54,29 +54,35 @@ public class PlayerController : NetworkBehaviour
 
         if (translation > 0) //move forward
         {
-            CmdMoveForward();
+            transform.Translate(0, 0, speed * Time.deltaTime);
+            CmdTranslateSplits(0, 0, speed * Time.deltaTime);    
         }
         else if (translation < 0) //move backward
         {
-            CmdMoveBackward();
+            transform.Translate(0, 0, -speed * Time.deltaTime);
+            CmdTranslateSplits(0, 0, -speed * Time.deltaTime);        
         }
 
         if (rot > 0) //turn right
         {
-            CmdTurnRight();
+            transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+            rotateSplits(rotationSpeed);  
         }
         else if (rot < 0) //turn left   
         {
-            CmdTurnLeft();
+            transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+            rotateSplits(-rotationSpeed);
         }
 
         if(Input.GetKey(KeyCode.Z)) //move upwards
         {
-            CmdMoveUp();
+            transform.Translate(0, speed / 2 * Time.deltaTime, 0);
+            CmdTranslateSplits(0, speed / 2 * Time.deltaTime, 0);
         }
         else if (Input.GetKey(KeyCode.H)) //move downwards
         {
-            CmdMoveDown();
+            transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
+            CmdTranslateSplits(0, -speed / 2 * Time.deltaTime, 0);
         }
 
         if(Input.GetKeyDown(KeyCode.Space))
@@ -87,13 +93,19 @@ public class PlayerController : NetworkBehaviour
         CmdCheckIfMerge();         
     }
 
-    private void translateSplits(float x, float y, float z) {
+    [Command]
+    void CmdTranslateSplits(float x, float y, float z) {
+        RpcTranslateSplits(x, y, z);
+    }
+
+    [ClientRpc]
+    void RpcTranslateSplits(float x, float y, float z) {
         for (int i = 0; i < playerSplits.Count; i++) {
             playerSplits[i].transform.Translate(x, y, z);
         }
     }
 
-    private void rotateSplits(float speed) {
+    void rotateSplits(float speed) {
         // TODO muss aber eigener Player sein und nicht alle mit Tag Player
         var player = GameObject.FindWithTag("Player").transform;
         
@@ -104,73 +116,12 @@ public class PlayerController : NetworkBehaviour
     }
 
     // This command code is called on the client but executed on the server using data from the client
-    [Command]
-    void CmdMoveForward() {
-        RpcMoveForward();
-    }
+    //[Command]
 
     // runs function on all clients using data from the server
     // called on Server, executed on the clients
-    [ClientRpc]
-    void RpcMoveForward() {
-        transform.Translate(0, 0, speed * Time.deltaTime);
-        translateSplits(0, 0, speed * Time.deltaTime);
-    }
-    
-    [Command]
-    void CmdMoveBackward() {
-        RpcMoveBackward();
-    }
-
-    [ClientRpc]
-    void RpcMoveBackward() {
-        transform.Translate(0, 0, -speed * Time.deltaTime);
-        translateSplits(0, 0, -speed * Time.deltaTime);
-    }
-
-    [Command]
-    void CmdTurnRight() {
-        RpcTurnRight();
-    }
-
-    [ClientRpc]
-    void RpcTurnRight() {
-        transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
-        rotateSplits(rotationSpeed);        
-    }
-
-    [Command]
-    void CmdTurnLeft() {
-        RpcTurnLeft();        
-    }
-
-    [ClientRpc]
-    void RpcTurnLeft() {
-        transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
-        rotateSplits(-rotationSpeed);
-    }
-
-    [Command]
-    void CmdMoveUp() {
-        RpcMoveUp();
-    }
-
-    [ClientRpc]
-    void RpcMoveUp() {
-        transform.Translate(0, speed / 2 * Time.deltaTime, 0);
-        translateSplits(0, speed / 2 * Time.deltaTime, 0);
-    }
-
-    [Command]
-    void CmdMoveDown() {
-        RpcMoveDown();
-    }
-
-    [ClientRpc]
-    void RpcMoveDown() {
-        transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
-        translateSplits(0, -speed / 2 * Time.deltaTime, 0);
-    }
+    // [ClientRpc]
+ 
 
     // TODO make split for clients work for networking
     // This command code is called on the client but run on the server using data from the client
@@ -276,7 +227,7 @@ public class PlayerController : NetworkBehaviour
             else {
                 // player is dead
                 // lostMenuUI.SetActive(true);
-                CmdRespawn();
+                // CmdRespawn();
             }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
