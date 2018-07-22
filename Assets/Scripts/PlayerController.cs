@@ -24,6 +24,8 @@ public class PlayerController : NetworkBehaviour
     Rigidbody rb;
     System.Random random = new System.Random();
 
+    // public GameObject lostMenuUI;
+
 
     void Start () {
         rb = GetComponent<Rigidbody>();
@@ -82,8 +84,7 @@ public class PlayerController : NetworkBehaviour
             CmdSplit(); 
         }
 
-        CmdCheckIfMerge(); 
-        
+        CmdCheckIfMerge();         
     }
 
     private void translateSplits(float x, float y, float z) {
@@ -102,13 +103,14 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    // This command code is called on the client but run on the server using data from the client
+    // This command code is called on the client but executed on the server using data from the client
     [Command]
     void CmdMoveForward() {
         RpcMoveForward();
     }
 
     // runs function on all clients using data from the server
+    // called on Server, executed on the clients
     [ClientRpc]
     void RpcMoveForward() {
         transform.Translate(0, 0, speed * Time.deltaTime);
@@ -271,6 +273,11 @@ public class PlayerController : NetworkBehaviour
                 CmdScaleUp(other.gameObject.transform.localScale.y*0.7f); 
                 enemySpawnerScript.createEnemy(1);  
             }
+            else {
+                // player is dead
+                // lostMenuUI.SetActive(true);
+                CmdRespawn();
+            }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
@@ -287,6 +294,11 @@ public class PlayerController : NetworkBehaviour
                 //other.getComponent<PlayerController>().died();
                 other.gameObject.SetActive(false);
                 CmdScaleUp(other.gameObject.transform.localScale.y);
+            }
+            else {
+                // player is dead
+                // lostMenuUI.SetActive(true);
+                RpcRespawn();
             }   
         }
     }
@@ -328,6 +340,22 @@ public class PlayerController : NetworkBehaviour
         calculateSpeed();
     }
  
+    [Command]
+    void CmdRespawn()
+    {
+        RpcRespawn();
+    }
+
+    [ClientRpc]
+    void RpcRespawn()
+    {
+        if (isLocalPlayer)
+        {
+            // move back to zero location
+            transform.position = Vector3.zero;
+        }
+    }
+
     private void adaptCameraOffset(float adaption)
     {
         Vector3 adaptedDistance = new Vector3(followPlayer.distance.x * adaption, followPlayer.distance.y * adaption, followPlayer.distance.z * adaption);

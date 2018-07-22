@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Networking;
 
-public class EnemyBehaviour : MonoBehaviour
+public class EnemyBehaviour : NetworkBehaviour
 {
 
     float slerpTime = 0.5f;
@@ -47,33 +48,34 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if(transform.localScale.x<9){
             calculateSpeed(); 
-        players = GameObject.FindGameObjectsWithTag("Player"); 
-        enemies = GameObject.FindGameObjectsWithTag("Collectable");
+            players = GameObject.FindGameObjectsWithTag("Player"); 
+            enemies = GameObject.FindGameObjectsWithTag("Collectable");
 
-        foreach (GameObject player in players)
-        {
-            if(closerButBigger(player)){
-                closestEntity = player; 
-                distOfClosest = Vector3.Distance(transform.position, player.transform.position);
-            }
-        }
-        foreach (GameObject enemy in enemies)
-        {
-            if(!GameObject.ReferenceEquals(transform.gameObject, enemy)){
-                 if(closerButBigger(enemy)){
-                    closestEntity = enemy; 
-                    distOfClosest = Vector3.Distance(transform.position, enemy.transform.position);
-                    Debug.Log("clos"); 
+            foreach (GameObject player in players)
+            {
+                if(closerButBigger(player)){
+                    closestEntity = player; 
+                    distOfClosest = Vector3.Distance(transform.position, player.transform.position);
                 }
             }
+            foreach (GameObject enemy in enemies)
+            {
+                if(!GameObject.ReferenceEquals(transform.gameObject, enemy)){
+                     if(closerButBigger(enemy)){
+                        closestEntity = enemy; 
+                        distOfClosest = Vector3.Distance(transform.position, enemy.transform.position);
+                        Debug.Log("clos"); 
+                    }
+                }
 
-        }
-        if(closestEntity==null){
-            findLittleBlob(); 
-        } else {
-            followClosest();
-        }
+            }
+            if(closestEntity==null){
+                findLittleBlob(); 
+            } else {
+                followClosest();
+            }
         }else {
+            // enemy hat gewonnen, alle anderen haben verloren
             //DAS SOLL BEI ALLEN PLAYERN ANGEZEIGT WERDEN 
             lostMenuUI.SetActive(true); 
         }
@@ -109,7 +111,7 @@ public class EnemyBehaviour : MonoBehaviour
     private void OnTriggerEnter(Collider other){
         if(other.gameObject.CompareTag("LittleBlob")){
             Debug.Log("LittleBlob"); 
-            scaleUp(other.gameObject.transform.localScale.x*0.7f);
+            RpcScaleUp(other.gameObject.transform.localScale.x*0.7f);
             Destroy(other.gameObject);
             littleBlobSpawnerScript.createLittleBlob(1);
             calculateSpeed();
@@ -117,7 +119,7 @@ public class EnemyBehaviour : MonoBehaviour
         else if(other.gameObject.CompareTag("Collectable")){
             if(transform.localScale.x>other.gameObject.transform.localScale.x){
                 Debug.Log("Collectable"); 
-                scaleUp(other.gameObject.transform.localScale.x);
+                RpcScaleUp(other.gameObject.transform.localScale.x);
                 Destroy(other.gameObject); 
                 enemySpawnerScript.createEnemy(1);
                 calculateSpeed(); 
@@ -132,17 +134,19 @@ public class EnemyBehaviour : MonoBehaviour
                 //IST WAHRSCHEINLICH FALSCH WEGEN NETZWERK!!! UNBEDINGT BEACHTEN RICHTIGEN PLAYER ZU BENACHRICHTIGEN
                 //lostMenuUI = GameObject.FindGameObjectWithTag("lostMenu"); 
                
-                lostMenuUI.SetActive(true); 
+                // new: lostMenuUI.SetActive(true); 
 
-                scaleUp(other.gameObject.transform.localScale.x);
-                Destroy(other.gameObject); 
+                RpcScaleUp(other.gameObject.transform.localScale.x);
+                
+                // new: Destroy(other.gameObject); 
                 calculateSpeed(); 
             }
            
         }
     }
 
-    private void scaleUp(float size)
+    [ClientRpc]
+    private void RpcScaleUp(float size)
     {
         // scale up player
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
