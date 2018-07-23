@@ -12,6 +12,7 @@ TagManager:
   - lostMenu
   - Canvas
   - ipInput
+  - lostMenuText
   layers:
   - Default
   - TransparentFX
