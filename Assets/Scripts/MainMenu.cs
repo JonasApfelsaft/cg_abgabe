@@ -49,14 +49,14 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void joinGame(){
-		if(ipInput.text == null){
-			NetworkManager.singleton.networkAddress = "127.0.0.1"; 
-		} else {
-			NetworkManager.singleton.networkAddress = ipInput.text.ToString(); 
-		}
+		// if(ipInput.text == null){
+		//	NetworkManager.singleton.networkAddress = "127.0.0.1"; 
+		// } else {
+		//	NetworkManager.singleton.networkAddress = ipInput.text.ToString(); 
+		// }
 		
-		NetworkManager.singleton.StartClient(); 
-		minimap.SetActive(true);
+		// NetworkManager.singleton.StartClient(); 
+		// minimap.SetActive(true);
 		mainMenuUI.SetActive(false); 
 	}
 

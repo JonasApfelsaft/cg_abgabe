@@ -26,6 +26,7 @@ public class PlayerController : NetworkBehaviour
 
     // public GameObject lostMenuUI;
 
+    public GameObject littleBlobToSpawn;
 
     void Start () {
         rb = GetComponent<Rigidbody>();
@@ -230,7 +231,22 @@ public class PlayerController : NetworkBehaviour
             // TODO 
             // NullReferenceException: Object reference not set to an instance of an object
             // PlayerController.OnTriggerEnter (UnityEngine.Collider other) (at Assets/Scripts/PlayerController.cs:244)
-            littleBlobSpawnerScript.createLittleBlob(1);
+            // old: littleBlobSpawnerScript.createLittleBlob(1);
+
+            // spawn Position
+            var spawnPosition = new Vector3(
+                                        other.gameObject.transform.localScale.x + 5, 
+                                        other.gameObject.transform.localScale.y + 5,
+                                        other.gameObject.transform.localScale.z + 5);
+
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            
+            Debug.Log("after isLocalPlayer");
+
+            CmdSpawnLittleBlob(spawnPosition);
         } 
         else if (other.gameObject.CompareTag("Player"))
         {
@@ -253,6 +269,32 @@ public class PlayerController : NetworkBehaviour
         if(transform.localScale.x<5){
             speed = 7-transform.localScale.x;
         }
+    }
+
+    [Command]
+    void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
+        RpcSpawnLittleBlob(spawnPositionOfLittleBlob);
+    }
+
+    [ClientRpc]
+    void RpcSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
+        Debug.Log("in CmdSpawnLittleBlob");
+
+        var spawnPosition = spawnPositionOfLittleBlob;
+
+        var spawnRotation = Quaternion.Euler( 
+            0.0f, 
+            0.0f, 
+            0.0f);
+  
+        var littleBlob = (GameObject)Instantiate(littleBlobToSpawn, spawnPosition, spawnRotation);
+            
+        Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
+        littleBlob.transform.localScale = newScale; 
+        littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
+            
+        NetworkServer.Spawn(littleBlob);
+        Debug.Log("after NetworkServer.Spawn(LittleBlob)");
     }
 
     public override void OnStartLocalPlayer()

@@ -173,6 +173,8 @@ MonoBehaviour:
     type: 2}
   playerSplitPrefab: {fileID: 1888242905079988, guid: 252cf62fbceb6486ca168a271b77313d,
     type: 2}
+  littleBlobToSpawn: {fileID: 1748556116134920, guid: 3dbdc775d502941ceb21eb053d4db434,
+    type: 2}
 --- !u!135 &135538046717951416
 SphereCollider:
   m_ObjectHideFlags: 1
