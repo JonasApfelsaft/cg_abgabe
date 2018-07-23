@@ -22,7 +22,12 @@ public class SingleOrMultiplayer : MonoBehaviour {
 		enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
 		littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
 		mainMenu.SetActive(false);
-		minimap = GameObject.FindGameObjectWithTag("minimap");
+		GameObject[] go = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach(GameObject g in go){
+            if(g.tag == "minimap"){
+                minimap = g; 
+            }
+        }
 		minimap.SetActive(false);
 	}
 	

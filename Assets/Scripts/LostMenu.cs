@@ -24,7 +24,7 @@ public class LostMenu : MonoBehaviour {
 		lostMenuUI.SetActive(true); 
 		minimap.SetActive(false);
 		Time.timeScale = 0f;
-		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "YOU LOST";
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "GAME OVER";
 	}
 
 	public void openWonMenu(){
@@ -65,6 +65,11 @@ public class LostMenu : MonoBehaviour {
 		foreach (GameObject littleBlob in littleBlobs)
 		{
 			Destroy(littleBlob);
+		}
+		GameObject[] players = GameObject.FindGameObjectsWithTag("Player"); 
+		foreach (GameObject player in players)
+		{
+			Destroy(player);
 		}
 	}
 }

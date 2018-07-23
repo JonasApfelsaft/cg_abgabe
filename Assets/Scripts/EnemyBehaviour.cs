@@ -55,7 +55,7 @@ public class EnemyBehaviour : MonoBehaviour
                 eatingFirstBlobs = false; 
             }
         }else {
-            if(transform.localScale.x<9){
+            if(transform.localScale.x<6.5f){
                 calculateSpeed(); 
             
                 enemies = GameObject.FindGameObjectsWithTag("Collectable");
@@ -82,9 +82,7 @@ public class EnemyBehaviour : MonoBehaviour
                     followClosest();
                 }
             }else {
-                // enemy hat gewonnen, alle anderen haben verloren
-                //DAS SOLL BEI ALLEN PLAYERN ANGEZEIGT WERDEN 
-                //notify player that he lost
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenu();
             }
         }
         

@@ -122,7 +122,7 @@ public class PlayerMovement : MonoBehaviour {
             else {
                 //player lost 
                 this.gameObject.SetActive(false);   
-                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openWonMenu();
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenu();
             }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
