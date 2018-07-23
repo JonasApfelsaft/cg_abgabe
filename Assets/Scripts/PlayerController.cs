@@ -90,7 +90,7 @@ public class PlayerController : NetworkBehaviour
             CmdSplit(); 
         }
 
-        CmdCheckIfMerge();         
+        checkIfMerge();         
     }
 
     [Command]
@@ -120,17 +120,9 @@ public class PlayerController : NetworkBehaviour
             playerSplits[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
         }
     }
-
-    // This command code is called on the client but executed on the server using data from the client
-    //[Command]
-
-    // runs function on all clients using data from the server
-    // called on Server, executed on the clients
-    // [ClientRpc]
  
-
     // TODO make split for clients work for networking
-    // This command code is called on the client but run on the server using data from the client
+    // This command code is called on the client but executed on the server using data from the client
     [Command]
     void CmdSplit()
     {
@@ -139,6 +131,7 @@ public class PlayerController : NetworkBehaviour
 
     [ClientRpc]
     // runs function on all clients using data from the server
+    // called on Server, executed on the clients    
     // source: https://answers.unity.com/questions/1240384/how-to-sync-scale-in-unet.html
     void RpcSplit()
     {
@@ -188,26 +181,22 @@ public class PlayerController : NetworkBehaviour
         mergeTime = 5.0f;
     }
 
-    // This command code is called on the client but run on the server using data from the client
-    [Command]
-    void CmdCheckIfMerge() {
-        RpcCheckIfMerge();
-    }
-
-    [ClientRpc]
-    // runs function on all clients using data from the server
-    // source: https://answers.unity.com/questions/1240384/how-to-sync-scale-in-unet.html
-    void RpcCheckIfMerge() 
-    {
+    void checkIfMerge() {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
-            merge(); 
+            CmdMerge(); 
         } else if(mergeTime!=-1.0f){
             mergeTime-=Time.deltaTime; 
         }
     }
     
-    void merge(){
-       for(int i = 0; i < playerSplits.Count; i++){
+    [Command]
+    void CmdMerge(){
+        RpcMerge();
+    }
+
+    [ClientRpc]
+    void RpcMerge(){
+        for(int i = 0; i < playerSplits.Count; i++){
             transform.localScale = transform.localScale + playerSplits[i].transform.localScale; 
             Destroy(playerSplits[i]);
         }
@@ -227,7 +216,7 @@ public class PlayerController : NetworkBehaviour
             if(transform.localScale.x>other.transform.localScale.x){
                 other.gameObject.SetActive(false);
                 //status.scoreKilledOtherPlayer(5);
-                CmdScaleUp(other.gameObject.transform.localScale.y*0.7f); 
+                scaleUp(other.gameObject.transform.localScale.y*0.7f); 
                 enemySpawnerScript.createEnemy(1);  
             }
             else {
@@ -240,7 +229,11 @@ public class PlayerController : NetworkBehaviour
         {
             other.gameObject.SetActive(false);
             //status.scoreAbsorbedLittleBlob();
-            CmdScaleUp(other.gameObject.transform.localScale.y);  
+            scaleUp(other.gameObject.transform.localScale.y);  
+            
+            // TODO 
+            // NullReferenceException: Object reference not set to an instance of an object
+            // PlayerController.OnTriggerEnter (UnityEngine.Collider other) (at Assets/Scripts/PlayerController.cs:244)
             littleBlobSpawnerScript.createLittleBlob(1);
         } 
         else if (other.gameObject.CompareTag("Player"))
@@ -250,7 +243,7 @@ public class PlayerController : NetworkBehaviour
                 //call method to let player know he died --> show menu with options respawn and exit
                 //other.getComponent<PlayerController>().died();
                 other.gameObject.SetActive(false);
-                CmdScaleUp(other.gameObject.transform.localScale.y);
+                scaleUp(other.gameObject.transform.localScale.y);
             }
             else {
                 // player is dead
@@ -280,22 +273,16 @@ public class PlayerController : NetworkBehaviour
         minimapCam.player = gameObject;
     }
 
-    [Command]
-    void CmdScaleUp(float size) {
-        RpcScaleUp(size);
-    }
-
-    [ClientRpc]
-    void RpcScaleUp(float size)
-    {
+    void scaleUp(float size) {
         // scale up player
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         
         // TODO does not work any more
         adaptCameraOffset(1 + size/4); 
-        calculateSpeed();
+        calculateSpeed();    
     }
+
  
     [Command]
     void CmdRespawn()
@@ -315,6 +302,7 @@ public class PlayerController : NetworkBehaviour
 
     private void adaptCameraOffset(float adaption)
     {
+        // TODO: 
         Vector3 adaptedDistance = new Vector3(followPlayer.distance.x * adaption, followPlayer.distance.y * adaption, followPlayer.distance.z * adaption);
         followPlayer.distance = Vector3.Slerp(followPlayer.distance, adaptedDistance, slerpTime);
      }

@@ -66,24 +66,9 @@ public class PlayerSplitController : NetworkBehaviour {
         }
     }
 
-
     void scaleUp(float size)
     {
         // scale up split
-        Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
-        transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-    }
-
-
-    [Command]
-    void CmdScaleUp(float size) {
-        RpcScaleUp(size);
-    }
-
-    [ClientRpc]
-    void RpcScaleUp(float size)
-    {
-        // scale up player
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
     }
