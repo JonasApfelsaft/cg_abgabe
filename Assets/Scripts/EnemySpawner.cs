@@ -1,12 +1,10 @@
 ﻿using UnityEngine;
-using UnityEngine.Networking;
 
-public class EnemySpawner : NetworkBehaviour {
+public class EnemySpawner : MonoBehaviour {
 	public GameObject enemyPrefab;
-	public int numberOfEnemies;
 
-	public override void OnStartServer() {
-        createEnemy(numberOfEnemies);
+	public void Start() {
+        
 	}
 
     public void createEnemy(int amount) {
@@ -23,7 +21,6 @@ public class EnemySpawner : NetworkBehaviour {
                 0.0f);
 
             var enemy = (GameObject)Instantiate(enemyPrefab, spawnPosition, spawnRotation);
-            NetworkServer.Spawn(enemy);
         }
     }
 }

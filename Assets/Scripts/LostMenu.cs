@@ -5,7 +5,12 @@ using UnityEngine;
 public class LostMenu : MonoBehaviour {
 
 	public GameObject lostMenuUI; 
-	public GameObject mainMenuUI; 
+	public GameObject singleOrMultiplayer; 
+	private SingleOrMultiplayer singleOrMultiplayerScript; 
+
+	public void Start() {
+		singleOrMultiplayerScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<SingleOrMultiplayer>(); 
+	}
 
 	public void openLostMenu(){
 		lostMenuUI.SetActive(true); 
@@ -15,7 +20,10 @@ public class LostMenu : MonoBehaviour {
 
 		//TODO:
 		//respawn 
-
+		//Destroy all current Enemies and LittleBlobs
+		destroyAll(); 
+		singleOrMultiplayerScript.startSingleplayer(); 
+		Time.timeScale = 1f;
 		lostMenuUI.SetActive(false); 
 	}
 
@@ -24,7 +32,22 @@ public class LostMenu : MonoBehaviour {
 
 		//TODO:
 		//spiel beenden !!!! 
+		//Destroy all current Enemies and LittleBlobs
+		destroyAll(); 
+		Time.timeScale = 1f;
+		singleOrMultiplayer.SetActive(true);
+	}
 
-		mainMenuUI.SetActive(true);
+	public void destroyAll(){
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag("Collectable"); 
+		foreach (GameObject enemy in enemies)
+		{
+			Destroy(enemy);
+		}
+		GameObject[] littleBlobs = GameObject.FindGameObjectsWithTag("LittleBlob"); 
+		foreach (GameObject littleBlob in littleBlobs)
+		{
+			Destroy(littleBlob);
+		}
 	}
 }

@@ -8,30 +8,29 @@ public class PlayerMovement : MonoBehaviour {
     float speed = 5.0F;
     float rotationSpeed = 65.0F;
     float slerpTime = 0.5f;
-    int xMin = -40;
-    int xMax = 40;
-    int yMin = 0; 
-    int yMax = 40; 
-    int zMin = -34;
-    int zMax = 36;
-    public int quantityLittleBlobs = 100; 
-    public int quantityEnemies = 10; 
     float mergeTime = -1.0f;
+    public GameObject enemySpawner; 
+    public GameObject littleBlobSpawner; 
+    public GameObject lostMenuUI; 
+
+    EnemySpawner enemySpawnerScript; 
+    LittleBlobSpawnerSingleplayer littleBlobSpawnerScript;
 
     public FollowPlayer camera;
     Rigidbody rb;
-    System.Random random = new System.Random();
     //public GameStatus status; 
 
 
     void Start () {
+        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
+        camera = Camera.main.GetComponent<FollowPlayer>();
         rb = GetComponent<Rigidbody>();
-        for (int i = 0; i<quantityLittleBlobs; i++)
-        {
-            createLittleBlob(); 
-        }
-        for (int i =0; i<quantityEnemies; i++) {
-            createEnemy(); 
+        GameObject[] go= Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach(GameObject g in go){
+            if(g.tag == "lostMenu"){
+                lostMenuUI = g; 
+            }
         }
     }
     
@@ -114,16 +113,23 @@ public class PlayerMovement : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Collectable"))
         {
-            other.gameObject.SetActive(false);
-            //status.scoreKilledOtherPlayer(5);
-            scaleUp(other.gameObject.transform.localScale.y*0.7f); 
-            createEnemy(); 
+            if(transform.localScale.x>other.transform.localScale.x){
+                other.gameObject.SetActive(false);
+                scaleUp(other.gameObject.transform.localScale.y*0.7f); 
+                enemySpawnerScript.createEnemy(1);  
+            }
+            else {
+                //player lost 
+                this.gameObject.SetActive(false);   
+                Time.timeScale = 0f;
+                lostMenuUI.SetActive(true);
+            }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
             other.gameObject.SetActive(false);
             //status.scoreAbsorbedLittleBlob();
-            createLittleBlob();
+            littleBlobSpawnerScript.createLittleBlob(1);
             scaleUp(other.gameObject.transform.localScale.y);  
         }  
         
@@ -139,7 +145,7 @@ public class PlayerMovement : MonoBehaviour {
     {
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
-        adaptCameraOffset(1 + size); 
+        adaptCameraOffset(1 + size/4    ); 
         calculateSpeed(); 
     }
 
@@ -147,16 +153,5 @@ public class PlayerMovement : MonoBehaviour {
     {
         Vector3 adaptedDistance = new Vector3(camera.distance.x * adaption, camera.distance.y * adaption, camera.distance.z * adaption);
         camera.distance = Vector3.Slerp(camera.distance, adaptedDistance, slerpTime);
-    }
-
-    private void createLittleBlob()
-    {
-        GameObject newBlob = Instantiate(Resources.Load("LittleBlob", typeof(GameObject))) as GameObject;
-        newBlob.transform.position = new Vector3(random.Next(xMin, xMax), random.Next(yMin, yMax), random.Next(zMin, zMax)); 
-    }
-
-    private void createEnemy() {
-        GameObject newEnemy = Instantiate(Resources.Load("Enemy", typeof(GameObject))) as GameObject; 
-        newEnemy.transform.position = new Vector3(random.Next(xMin, xMax), random.Next(yMin, yMax), random.Next(zMin, zMax)); 
     }
 }

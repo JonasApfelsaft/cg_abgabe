@@ -1,16 +1,14 @@
 ﻿    using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.Networking;
 
-public class EnemyBehaviour : NetworkBehaviour
+public class EnemyBehaviour : MonoBehaviour
 {
 
     float slerpTime = 0.5f;
     GameObject closestEntity; 
     GameObject closestBlob; 
-    GameObject[] players; 
+    GameObject player; 
     GameObject[] enemies; 
     GameObject[] blobs; 
     float distOfClosest; 
@@ -19,18 +17,22 @@ public class EnemyBehaviour : NetworkBehaviour
     public GameObject enemySpawner; 
     public GameObject littleBlobSpawner; 
     public GameObject lostMenuUI; 
+    private bool eatingFirstBlobs; 
+    private int numberFirstBlobs; 
 
     EnemySpawner enemySpawnerScript; 
-    LittleBlobSpawner littleBlobSpawnerScript; 
+    LittleBlobSpawnerSingleplayer littleBlobSpawnerScript; 
 
     
 
     void Start()
     {
+        numberFirstBlobs = Random.Range(3,10);
+        eatingFirstBlobs = true; 
+        player = GameObject.FindGameObjectWithTag("Player"); 
         enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
-        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
+        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
         distOfClosest = 1000; 
-        players = GameObject.FindGameObjectsWithTag("Player"); 
         enemies = GameObject.FindGameObjectsWithTag("Collectable");
         rb = transform.gameObject.GetComponent<Rigidbody>(); 
         speed = 2; 
@@ -46,39 +48,46 @@ public class EnemyBehaviour : NetworkBehaviour
 
     void Update()
     {
-        if(transform.localScale.x<9){
-            calculateSpeed(); 
-            players = GameObject.FindGameObjectsWithTag("Player"); 
-            enemies = GameObject.FindGameObjectsWithTag("Collectable");
+        if(eatingFirstBlobs){
+            if(numberFirstBlobs>0){
+                findLittleBlob();
+            }else {
+                eatingFirstBlobs = false; 
+            }
+        }else {
+            if(transform.localScale.x<9){
+                calculateSpeed(); 
+            
+                enemies = GameObject.FindGameObjectsWithTag("Collectable");
 
-            foreach (GameObject player in players)
-            {
                 if(closerButBigger(player)){
                     closestEntity = player; 
                     distOfClosest = Vector3.Distance(transform.position, player.transform.position);
                 }
-            }
-            foreach (GameObject enemy in enemies)
-            {
-                if(!GameObject.ReferenceEquals(transform.gameObject, enemy)){
-                     if(closerButBigger(enemy)){
-                        closestEntity = enemy; 
-                        distOfClosest = Vector3.Distance(transform.position, enemy.transform.position);
-                        Debug.Log("clos"); 
+            
+                foreach (GameObject enemy in enemies)
+                {
+                    if(!GameObject.ReferenceEquals(transform.gameObject, enemy)){
+                        if(closerButBigger(enemy)){
+                            closestEntity = enemy; 
+                            distOfClosest = Vector3.Distance(transform.position, enemy.transform.position);
+                        }
+                    } else {
                     }
-                }
 
+                }
+                if(closestEntity==null){
+                    findLittleBlob(); 
+                } else {
+                    followClosest();
+                }
+            }else {
+                // enemy hat gewonnen, alle anderen haben verloren
+                //DAS SOLL BEI ALLEN PLAYERN ANGEZEIGT WERDEN 
+                //notify player that he lost
             }
-            if(closestEntity==null){
-                findLittleBlob(); 
-            } else {
-                followClosest();
-            }
-        }else {
-            // enemy hat gewonnen, alle anderen haben verloren
-            //DAS SOLL BEI ALLEN PLAYERN ANGEZEIGT WERDEN 
-            lostMenuUI.SetActive(true); 
         }
+        
         
 
     }
@@ -110,7 +119,9 @@ public class EnemyBehaviour : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other){
         if(other.gameObject.CompareTag("LittleBlob")){
-            Debug.Log("LittleBlob"); 
+            if(numberFirstBlobs>0){
+                numberFirstBlobs--;
+            }
             RpcScaleUp(other.gameObject.transform.localScale.x*0.7f);
             Destroy(other.gameObject);
             littleBlobSpawnerScript.createLittleBlob(1);
@@ -118,7 +129,6 @@ public class EnemyBehaviour : NetworkBehaviour
         }
         else if(other.gameObject.CompareTag("Collectable")){
             if(transform.localScale.x>other.gameObject.transform.localScale.x){
-                Debug.Log("Collectable"); 
                 RpcScaleUp(other.gameObject.transform.localScale.x);
                 Destroy(other.gameObject); 
                 enemySpawnerScript.createEnemy(1);
@@ -128,11 +138,8 @@ public class EnemyBehaviour : NetworkBehaviour
         }
         else if(other.gameObject.CompareTag("Player")){
             if(transform.localScale.x>other.gameObject.transform.localScale.x){
-                Debug.Log("Player lost"); 
 
                 //TODO: Notify Player that he lost
-                //IST WAHRSCHEINLICH FALSCH WEGEN NETZWERK!!! UNBEDINGT BEACHTEN RICHTIGEN PLAYER ZU BENACHRICHTIGEN
-                //lostMenuUI = GameObject.FindGameObjectWithTag("lostMenu"); 
                
                 // new: lostMenuUI.SetActive(true); 
 
@@ -145,7 +152,6 @@ public class EnemyBehaviour : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
     private void RpcScaleUp(float size)
     {
         // scale up player

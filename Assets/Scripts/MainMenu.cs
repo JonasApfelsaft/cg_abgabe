@@ -11,6 +11,7 @@ public class MainMenu : MonoBehaviour {
 	InputField inputField; 
 	private Text ipInput;
 	private int port; 
+	public GameObject singleOrMultiplayer; 
 
 	// Use this for initialization
 	void Start () {
@@ -48,9 +49,9 @@ public class MainMenu : MonoBehaviour {
 		mainMenuUI.SetActive(false); 
 	}
 
-	 public void QuitGame()
+	 public void Back()
     {
-        Debug.Log("Quit Game");
-        Application.Quit(); 
+        singleOrMultiplayer.SetActive(true);
+		mainMenuUI.SetActive(false); 
     }
 }

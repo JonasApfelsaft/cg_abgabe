@@ -23,10 +23,7 @@ GameObject:
   - component: {fileID: 135837839571185430}
   - component: {fileID: 23026233643393396}
   - component: {fileID: 54803110985116838}
-  - component: {fileID: 195302861714097006}
   - component: {fileID: 114402327262118650}
-  - component: {fileID: 114566014137138718}
-  - component: {fileID: 114733230448206992}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Collectable
@@ -117,62 +114,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemySpawner: {fileID: 1684969098914352, guid: 6382af4219a7b43cc9cfee6423da9ac5,
     type: 2}
-  littleBlobSpawner: {fileID: 1459329556924722, guid: dc0669e9e04fa44a38aaa0a15b0a0f09,
+  littleBlobSpawner: {fileID: 1001994367520320, guid: b793cd3a4bf58482297dc82fa644a354,
     type: 2}
-  lostMenuUI: {fileID: 0}
---- !u!114 &114566014137138718
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1833439839105294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 185
-    i1: 108
-    i2: 185
-    i3: 24
-    i4: 19
-    i5: 86
-    i6: 100
-    i7: 219
-    i8: 186
-    i9: 193
-    i10: 112
-    i11: 247
-    i12: 84
-    i13: 114
-    i14: 27
-    i15: 73
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
---- !u!114 &114733230448206992
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1833439839105294}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TransformSyncMode: 3
-  m_SendInterval: 0.11111111
-  m_SyncRotationAxis: 7
-  m_RotationSyncCompression: 0
-  m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_VelocityThreshold: 0.0001
-  m_SnapThreshold: 0.01
-  m_InterpolateRotation: 1
-  m_InterpolateMovement: 1
+  lostMenuUI: {fileID: 1433944932356404, guid: 409bf9f7441a645869ffa49a59808261, type: 2}
 --- !u!135 &135837839571185430
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -185,24 +129,3 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!195 &195302861714097006
-NavMeshAgent:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1833439839105294}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1
-  m_BaseOffset: 0.5
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
