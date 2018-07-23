@@ -111,17 +111,13 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RpcRotateSplits(float speed) {
-        // TODO muss aber eigener Player sein und nicht alle mit Tag Player
-        var player = GameObject.FindWithTag("Player").transform;
-        
+    void RpcRotateSplits(float speed) {        
         for (int i = 0; i < playerSplits.Count; i++) {
             // rotate clone around original player which is the object on the left of the row
-            playerSplits[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
+            playerSplits[i].transform.RotateAround(transform.position, gameObject.transform.up, speed * Time.deltaTime);
         }
     }
  
-    // TODO make split for clients work for networking
     // This command code is called on the client but executed on the server using data from the client
     [Command]
     void CmdSplit()

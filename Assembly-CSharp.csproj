@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\FollowPlayer.cs" />
      <Compile Include="Assets\Scripts\LittleBlobSpawner.cs" />
+     <Compile Include="Assets\Scripts\LittleBlobSpawnerSingleplayer.cs" />
      <Compile Include="Assets\Scripts\LostMenu.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\Minimap.cs" />
@@ -66,6 +67,7 @@
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\PlayerSplitController.cs" />
+     <Compile Include="Assets\Scripts\SingleOrMultiplayer.cs" />
      <None Include="Assets\Earth\Readme.txt" />
      <None Include="Assets\Earth\Materials\EarthShader.shader" />
  <Reference Include="UnityEditor.StandardEvents">
