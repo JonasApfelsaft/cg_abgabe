@@ -75,6 +75,7 @@ public class PlayerMovement : MonoBehaviour {
         }
 
         checkIfMerge(); 
+        checkIfWon(); 
         
     }
 
@@ -121,8 +122,7 @@ public class PlayerMovement : MonoBehaviour {
             else {
                 //player lost 
                 this.gameObject.SetActive(false);   
-                Time.timeScale = 0f;
-                lostMenuUI.SetActive(true);
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openWonMenu();
             }
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
@@ -153,5 +153,12 @@ public class PlayerMovement : MonoBehaviour {
     {
         Vector3 adaptedDistance = new Vector3(camera.distance.x * adaption, camera.distance.y * adaption, camera.distance.z * adaption);
         camera.distance = Vector3.Slerp(camera.distance, adaptedDistance, slerpTime);
+    }
+
+    private void checkIfWon(){
+        if(this.transform.localScale.x>=6.5f){
+            GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openWonMenu();
+            this.gameObject.SetActive(false);  
+        }
     }
 }

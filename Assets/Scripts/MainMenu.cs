@@ -15,14 +15,25 @@ public class MainMenu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		inputField = GameObject.FindGameObjectWithTag("ipInput").GetComponent<InputField>();
+		GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
+        GameObject[] go= Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach(GameObject g in go){
+            if(g.tag == "ipInput"){
+                inputField = g.GetComponent<InputField>();
+            }
+        }
+		//inputField = GameObject.FindGameObjectWithTag("ipInput").GetComponent<InputField>();
 		//inputField.contentType = InputField.ContentType.IntegerNumber; 
-		ipInput = transform.Find("Text").gameObject.GetComponent<Text>(); 
+		ipInput = inputField.transform.Find("Text").gameObject.GetComponent<Text>(); 
 		//ipInput = inputField.GetComponent<Text>(); 
 		port = 3000; 
 		NetworkManager.singleton.networkPort = port; 
-		mainMenuUI.SetActive(true);
-		minimap = GameObject.FindGameObjectWithTag("minimap");
+		go = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach(GameObject g in go){
+            if(g.tag == "minimap"){
+                minimap = g; 
+            }
+        }
 		minimap.SetActive(false);
 	}
 	

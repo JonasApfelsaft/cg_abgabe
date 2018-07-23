@@ -1,30 +1,47 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LostMenu : MonoBehaviour {
 
 	public GameObject lostMenuUI; 
 	public GameObject singleOrMultiplayer; 
 	private SingleOrMultiplayer singleOrMultiplayerScript; 
+	private GameObject minimap; 
 
 	public void Start() {
 		singleOrMultiplayerScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<SingleOrMultiplayer>(); 
+		GameObject[] go = Resources.FindObjectsOfTypeAll<GameObject>();
+        foreach(GameObject g in go){
+            if(g.tag == "minimap"){
+                minimap = g; 
+            }
+        }
 	}
 
 	public void openLostMenu(){
 		lostMenuUI.SetActive(true); 
+		minimap.SetActive(false);
+		Time.timeScale = 0f;
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "YOU LOST";
+	}
+
+	public void openWonMenu(){
+		lostMenuUI.SetActive(true);
+		minimap.SetActive(false);
+		Time.timeScale = 0f;
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "YOU WON";
 	}
 
 	public void respawn(){
-
-		//TODO:
-		//respawn 
 		//Destroy all current Enemies and LittleBlobs
 		destroyAll(); 
+		//restart game
 		singleOrMultiplayerScript.startSingleplayer(); 
 		Time.timeScale = 1f;
 		lostMenuUI.SetActive(false); 
+		minimap.SetActive(true); 
 	}
 
 	public void backToMainMenu(){

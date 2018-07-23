@@ -15,12 +15,15 @@ public class SingleOrMultiplayer : MonoBehaviour {
 	private GameObject player; 
 	public int numberOfEnemies; 
 	public int numberOfLittleBlobs; 
+	private GameObject minimap; 
 
 	// Use this for initialization
 	void Start () {	
 		enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
 		littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
-		
+		mainMenu.SetActive(false);
+		minimap = GameObject.FindGameObjectWithTag("minimap");
+		minimap.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -53,5 +56,8 @@ public class SingleOrMultiplayer : MonoBehaviour {
 		//Set camera to follow player
 		followPlayer = Camera.main.GetComponent<FollowPlayer>();
         followPlayer.player = player.transform;
+		//activate minimap and set its player
+		minimap.SetActive(true);		
+		GameObject.FindGameObjectWithTag("minimapCam").GetComponent<Minimap>().player = player; 
 	}
 }
