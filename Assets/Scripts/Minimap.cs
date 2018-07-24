@@ -22,7 +22,7 @@ public class Minimap : MonoBehaviour {
 			newPosition.y = transform.position.y; 
 			transform.position = newPosition; 
 			transform.rotation = Quaternion.Euler(90f, player.transform.rotation.y, 0f); 
-			minimapCam.orthographicSize = player.transform.localScale.x + 4.5f; 
+			minimapCam.orthographicSize = player.transform.localScale.x + 7.5f; 
 		}
 		
 		

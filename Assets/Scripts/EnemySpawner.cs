@@ -11,9 +11,9 @@ public class EnemySpawner : MonoBehaviour {
         for (int i = 0; i < amount; i++) {
 
             var spawnPosition = new Vector3(
-                Random.Range(-8.0f, 8.0f),
-                Random.Range(-8.0f, 8.0f),
-                Random.Range(-8.0f, 8.0f));
+                Random.Range(-50.0f, 50.0f),
+                Random.Range(-50.0f, 50.0f),
+                Random.Range(-50.0f, 50.0f));
 
             var spawnRotation = Quaternion.Euler( 
                 0.0f, 

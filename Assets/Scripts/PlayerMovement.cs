@@ -85,8 +85,16 @@ public class PlayerMovement : MonoBehaviour {
 
         checkIfMerge(); 
         checkIfWon(); 
+        //set velocity & angularVelocity to 0 so nothing weird happens when player collides with playing field walls
         rb.angularVelocity = new Vector3(0,0,0);
         rb.velocity = new Vector3(0,0,0);
+        //same for clones
+        GameObject[] clones = GameObject.FindGameObjectsWithTag("Clone");
+        foreach (GameObject clone in clones){
+            var rbC = clone.GetComponent<Rigidbody>();
+            rbC.angularVelocity = new Vector3(0,0,0);
+            rbC.velocity = new Vector3(0,0,0);
+        }
         
     }
 
@@ -129,6 +137,9 @@ public class PlayerMovement : MonoBehaviour {
             GameObject newClone = Instantiate(transform.gameObject);
             newClone.tag = "Clone";
             Destroy(newClone.GetComponent<PlayerMovement>());
+
+            //add script
+
             Debug.Log("Clone erstellt mit Tag: " + newClone.tag);
             // position new clones
             newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
