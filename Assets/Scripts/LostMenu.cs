@@ -112,15 +112,23 @@ public class LostMenu : MonoBehaviour {
 		if (multiplayer){
 			//END CONNECTION IF CLIENT 
 			//IF HOST END CONNECTION AND SHOW ALL CLIENTS MAIN MENU 
+			if(Network.isServer){
+				NetworkServer.Shutdown(); 
+				NetworkManager.singleton.StopHost(); 
+			} else {
+				NetworkManager.singleton.StopClient(); 
+			}
+			lostMenuUI.SetActive(false);
+			destroyAll(); 
+			Time.timeScale = 1f;
+			singleOrMultiplayer.SetActive(true);
+		} else {
+			lostMenuUI.SetActive(false); 		
+			destroyAll(); 
+			Time.timeScale = 1f;
+			singleOrMultiplayer.SetActive(true);
 		}
-		lostMenuUI.SetActive(false); 
-
-		//TODO:
-		//spiel beenden !!!! 
-		//Destroy all current Enemies and LittleBlobs
-		destroyAll(); 
-		Time.timeScale = 1f;
-		singleOrMultiplayer.SetActive(true);
+		
 	}
 
 	public void destroyAll(){
