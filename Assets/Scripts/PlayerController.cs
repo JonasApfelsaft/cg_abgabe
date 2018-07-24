@@ -24,7 +24,6 @@ public class PlayerController : NetworkBehaviour
     Rigidbody rb;
     System.Random random = new System.Random();
 
-    // public GameObject lostMenuUI;
 
     public GameObject littleBlobToSpawn;
 
@@ -208,22 +207,7 @@ public class PlayerController : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // TODO den Fall gibt es im Multiplayer Modus nicht mehr
-        if (other.gameObject.CompareTag("Collectable"))
-        {
-            if(transform.localScale.x>other.transform.localScale.x){
-                other.gameObject.SetActive(false);
-                //status.scoreKilledOtherPlayer(5);
-                scaleUp(other.gameObject.transform.localScale.y*0.7f); 
-                enemySpawnerScript.createEnemy(1);  
-            }
-            else {
-                // player is dead
-                // lostMenuUI.SetActive(true);
-                // CmdRespawn();
-            }
-        }
-        else if (other.gameObject.CompareTag("LittleBlob"))
+        if (other.gameObject.CompareTag("LittleBlob"))
         {
             //status.scoreAbsorbedLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
@@ -258,10 +242,12 @@ public class PlayerController : NetworkBehaviour
                 //TO DO
                 //call method to let player know he died --> show menu with options respawn and exit
                 //other.getComponent<PlayerController>().died();
-                other.gameObject.SetActive(false);
+                //other.gameObject.SetActive(false);
                 scaleUp(other.gameObject.transform.localScale.y);
             }
             else {
+                this.gameObject.SetActive(false);
+                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
                 // player is dead
                 // lostMenuUI.SetActive(true);
                 // RpcRespawn();

@@ -30,6 +30,13 @@ public class LostMenu : MonoBehaviour {
 		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "GAME OVER";
 	}
 
+	public void openLostMenuMultiplayerWithRespawn() {
+		lostMenuUI.SetActive(true); 
+		minimap.SetActive(false);
+		Time.timeScale = 0f;
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "RETRY?";
+	}
+
 	public void openWonMenu(){
 		lostMenuUI.SetActive(true);
 		minimap.SetActive(false);
