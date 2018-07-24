@@ -229,12 +229,12 @@ public class PlayerController : NetworkBehaviour
             var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
             // oder eher: destroy
-            // other.gameObject.SetActive(false);
+            other.gameObject.SetActive(false);
             // Destroy(other.gameObject);
 
 
             // destroy over network
-            CmdDestroy(other.gameObject);
+           // CmdDestroy(other.gameObject);
 
             // if (!isLocalPlayer)
             // {
@@ -260,12 +260,13 @@ public class PlayerController : NetworkBehaviour
                 else if (transform.localScale.x<other.transform.localScale.x){
                     this.gameObject.SetActive(false);
                     Debug.Log("lost");
-                    if(!Network.isClient){
+                    
+                    if(!Network.isServer && Network.isClient){
                         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
-                    } 
-                    if(!Network.isServer){
+                    }else if(Network.isClient && Network.isServer){
                         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithoutRespawn();
-                    }
+                        Debug.Log("SERVER"); 
+                    } 
                     
                 }  
             }

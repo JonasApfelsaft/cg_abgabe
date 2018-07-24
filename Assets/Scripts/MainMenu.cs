@@ -60,11 +60,11 @@ public class MainMenu : MonoBehaviour {
 		var success = NetworkManager.singleton.StartClient();
         if (success == null)
         {
-			minimap.SetActive(true);
-			mainMenuUI.SetActive(false); 
+			
             
         }else {
-			
+			minimap.SetActive(true);
+			mainMenuUI.SetActive(false); 
 		}
 	    
 	}
