@@ -213,8 +213,9 @@ public class PlayerController : NetworkBehaviour
         if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow"))
         {
             //status.scoreAbsorbedLittleBlob();
-            scaleUp(other.gameObject.transform.localScale.y);  
-            
+            // scaleUp(other.gameObject.transform.localScale.y);  
+            scaleUp(1.5f);
+
             // TODO: player der mit neuem blob collidet wird zu ballon
             // old: littleBlobSpawnerScript.createLittleBlob(1);
 
@@ -235,10 +236,10 @@ public class PlayerController : NetworkBehaviour
             // destroy over network
             CmdDestroy(other.gameObject);
 
-            if (!isLocalPlayer)
-            {
-                return;
-            }
+            // if (!isLocalPlayer)
+            // {
+            //     return;
+            // }
             
             Debug.Log("after isLocalPlayer");
 
@@ -280,7 +281,13 @@ public class PlayerController : NetworkBehaviour
 
     [Command]
     void CmdDestroy(GameObject go) {
-        NetworkServer.Destroy(go);
+        Debug.Log("in CmdDestroy");
+        go.SetActive(false);
+        // NetworkServer.Destroy(go);
+        
+        // removes object but does not delete it on server
+        // NetworkServer.UnSpawn(go);
+
     }
 
     [Command]
@@ -345,7 +352,9 @@ public class PlayerController : NetworkBehaviour
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         
         // TODO does not work any more
-        adaptCameraOffset(1 + size/4); 
+        if (isLocalPlayer) {
+            adaptCameraOffset(1 + size/4); 
+        }
         calculateSpeed();    
     }
 
