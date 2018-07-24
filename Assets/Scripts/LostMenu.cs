@@ -9,6 +9,7 @@ public class LostMenu : MonoBehaviour {
 	public GameObject singleOrMultiplayer; 
 	private SingleOrMultiplayer singleOrMultiplayerScript; 
 	private GameObject minimap; 
+	private GameObject playingField; 
 
 	public void Start() {
 		singleOrMultiplayerScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<SingleOrMultiplayer>(); 
@@ -16,7 +17,9 @@ public class LostMenu : MonoBehaviour {
         foreach(GameObject g in go){
             if(g.tag == "minimap"){
                 minimap = g; 
-            }
+            } else if(g.tag == "playingField"){
+				playingField = g;
+			}
         }
 	}
 
@@ -71,5 +74,6 @@ public class LostMenu : MonoBehaviour {
 		{
 			Destroy(player);
 		}
+		playingField.SetActive(false);
 	}
 }

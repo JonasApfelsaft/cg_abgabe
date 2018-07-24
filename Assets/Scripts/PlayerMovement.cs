@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour {
 
 
     void Start () {
-        gameObject.tag="Player";
+        //gameObject.tag="Player";
 
         enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
         littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
@@ -46,11 +46,13 @@ public class PlayerMovement : MonoBehaviour {
         if (translation > 0) //move forwards
         {
             transform.Translate(0, 0, speed * Time.deltaTime);
+            //rb.MovePosition(transform.position + new Vector3(0, 0, speed*Time.deltaTime));
             translateClones(0, 0, -speed * Time.deltaTime);
         }
         else if (translation < 0) //move backwards
         {
             transform.Translate(0, 0, -speed * Time.deltaTime);
+            //rb.MovePosition(transform.position + new Vector3(0, 0, -speed*Time.deltaTime));
             translateClones(0, 0, speed * Time.deltaTime);
         }
 
@@ -83,14 +85,16 @@ public class PlayerMovement : MonoBehaviour {
 
         checkIfMerge(); 
         checkIfWon(); 
+        rb.angularVelocity = new Vector3(0,0,0);
+        rb.velocity = new Vector3(0,0,0);
         
     }
 
     private void translateClones(float x, float y, float z) {
-        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        GameObject[] clones = GameObject.FindGameObjectsWithTag("Clone");
 
-        for (int i = 0; i < clones.Length; i++) {
-            clones[i].transform.Translate(x, y, z);
+        foreach(GameObject clone in clones) {
+            clone.transform.Translate(-x, y, -z);
         }
     }
 
@@ -122,14 +126,13 @@ public class PlayerMovement : MonoBehaviour {
         var xOffsetNewClones = (currentClones.Length + 1) * transform.localScale.x;
         // Instantiate new clones (one per current clone + player)
         for (int i = 0; i < currentClones.Length + 1; i++) {
-            GameObject newClone = Instantiate(gameObject);
+            GameObject newClone = Instantiate(transform.gameObject);
             newClone.tag = "Clone";
+            Destroy(newClone.GetComponent<PlayerMovement>());
             Debug.Log("Clone erstellt mit Tag: " + newClone.tag);
             // position new clones
             newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
-
-            // Spawn the newClone on the Clients
-            // NetworkServer.Spawn(newClone);
+            Debug.Log(newClone.tag);
         }
 
         calculateSpeed();
@@ -149,9 +152,9 @@ public class PlayerMovement : MonoBehaviour {
     
     void merge(){
         var clones = GameObject.FindGameObjectsWithTag("Clone"); 
-        for(int i =0; i<clones.Length; i++){
-            transform.localScale = transform.localScale + clones[i].transform.localScale; 
-            Destroy(clones[i]); 
+        foreach(GameObject clone in clones){
+            transform.localScale = transform.localScale + clone.transform.localScale; 
+            Destroy(clone); 
         }
         calculateSpeed(); 
 

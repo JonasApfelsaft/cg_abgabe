@@ -16,6 +16,7 @@ public class SingleOrMultiplayer : MonoBehaviour {
 	public int numberOfEnemies; 
 	public int numberOfLittleBlobs; 
 	private GameObject minimap; 
+	private GameObject playingField; 
 
 	// Use this for initialization
 	void Start () {	
@@ -26,9 +27,12 @@ public class SingleOrMultiplayer : MonoBehaviour {
         foreach(GameObject g in go){
             if(g.tag == "minimap"){
                 minimap = g; 
-            }
+            }else if(g.tag == "playingField"){
+				playingField = g;
+			}
         }
 		minimap.SetActive(false);
+		playingField.SetActive(false);
 	}
 	
 	// Update is called once per frame
@@ -64,5 +68,7 @@ public class SingleOrMultiplayer : MonoBehaviour {
 		//activate minimap and set its player
 		minimap.SetActive(true);		
 		GameObject.FindGameObjectWithTag("minimapCam").GetComponent<Minimap>().player = player; 
+		//activate Playing Field
+		playingField.SetActive(true);
 	}
 }

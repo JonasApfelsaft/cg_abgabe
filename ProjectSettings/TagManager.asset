@@ -6,13 +6,15 @@ TagManager:
   tags:
   - LittleBlob
   - Collectable
-  - Clone
   - minimapCam
   - minimap
   - lostMenu
   - Canvas
   - ipInput
   - lostMenuText
+  - Clone
+  - wall
+  - playingField
   layers:
   - Default
   - TransparentFX

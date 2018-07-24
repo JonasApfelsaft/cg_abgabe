@@ -26,7 +26,7 @@ public class FollowPlayer : MonoBehaviour {
 
             angle = transform.rotation.eulerAngles.y; 
         
-            transform.rotation = Quaternion.Slerp(transform.rotation, player.rotation, 0.1f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, player.rotation.eulerAngles.y, 0), 0.1f);
 
             angle = transform.rotation.eulerAngles.y - angle;
 
