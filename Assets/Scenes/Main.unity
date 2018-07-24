@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.043458275, g: 0.041858114, b: 0.04489567, a: 1}
+  m_IndirectSpecularColor: {r: 0.044414923, g: 0.041873932, b: 0.045860372, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -811,6 +811,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lostMenuUI: {fileID: 1471285264}
   singleOrMultiplayer: {fileID: 903431306}
+  player: {fileID: 0}
 --- !u!114 &386340081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2440,6 +2441,10 @@ Prefab:
     - target: {fileID: 1036201092727722, guid: 409bf9f7441a645869ffa49a59808261, type: 2}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1666594755920968, guid: 409bf9f7441a645869ffa49a59808261, type: 2}
+      propertyPath: m_TagString
+      value: respawnBtn
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 409bf9f7441a645869ffa49a59808261, type: 2}
