@@ -275,11 +275,12 @@ public class PlayerController : NetworkBehaviour
                     this.gameObject.SetActive(false);
                     Debug.Log("lost");
                     
-                    if(!Network.isServer){
-                        GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
-                    }
-                    if(!Network.isClient){
+                    if(isServer){
                         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithoutRespawn();
+                        Debug.Log("Server"); 
+                    }else if(isClient){
+                        GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
+                        Debug.Log("Client"); 
                     } 
                     
                 }  
