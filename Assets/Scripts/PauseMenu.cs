@@ -36,6 +36,11 @@ public class PauseMenu : MonoBehaviour {
         //status.setGameStatus(GameStatus.Status.Play); 
     }
 
+    public void BackToMenu() {
+        //end all connections 
+        //show menu
+    }
+
     private void Pause()
     {
         pauseMenuUI.SetActive(true);

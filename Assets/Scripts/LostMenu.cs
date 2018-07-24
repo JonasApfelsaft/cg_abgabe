@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking; 
 
 public class LostMenu : MonoBehaviour {
 
@@ -13,8 +14,11 @@ public class LostMenu : MonoBehaviour {
 	private bool multiplayer; 
 	public GameObject player; 
 	private GameObject respawnBtn; 
+	public string ip; 
+	public int port; 
 
 	public void Start() {
+		port = 3000; 
 		multiplayer = false; 
 		singleOrMultiplayerScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<SingleOrMultiplayer>(); 
 		GameObject[] go = Resources.FindObjectsOfTypeAll<GameObject>();
@@ -74,13 +78,24 @@ public class LostMenu : MonoBehaviour {
 
 	public void respawn(){
 		if(multiplayer){
+			ip = NetworkManager.singleton.networkAddress; 
+			NetworkManager.singleton.StopClient(); 
+			NetworkManager.singleton.networkPort = port; 
+			NetworkManager.singleton.networkAddress = ip; 
 
-			//end connection 
-			//reconnect 
-			//like in join 
 
-			lostMenuUI.SetActive(false); 
-			minimap.SetActive(true);
+			var success = NetworkManager.singleton.StartClient();
+       		if (success == null)
+        	{
+				lostMenuUI.SetActive(false);
+				singleOrMultiplayer.SetActive(true);
+
+        	}else {
+				lostMenuUI.SetActive(false); 
+				minimap.SetActive(true);
+			}
+
+			
 		} else {
 			//Destroy all current Enemies and LittleBlobs
 			destroyAll(); 
