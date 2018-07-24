@@ -26,6 +26,8 @@ public class PlayerController : NetworkBehaviour
 
 
     public GameObject littleBlobToSpawn;
+    public GameObject littleBlobSpawnYellow;
+
 
     void Start () {
         rb = GetComponent<Rigidbody>();
@@ -207,7 +209,7 @@ public class PlayerController : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("LittleBlob"))
+        if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow")
         {
             //status.scoreAbsorbedLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
@@ -222,7 +224,7 @@ public class PlayerController : NetworkBehaviour
             //                            other.gameObject.transform.localScale.y + 5,
             //                            other.gameObject.transform.localScale.z + 5);
 
-            var spawnPosition = (other.gameObject.transform.position * 0.2f);
+            var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
             // oder eher: destroy
             other.gameObject.SetActive(false);
@@ -234,7 +236,9 @@ public class PlayerController : NetworkBehaviour
             
             Debug.Log("after isLocalPlayer");
 
-            CmdSpawnLittleBlob(spawnPosition);
+            // CmdSpawnLittleBlob(spawnPosition);
+
+            CmdSpawnLittleBlobYellow(spawnPosition);
         } 
         else if (other.gameObject.CompareTag("Player"))
         {
@@ -280,6 +284,27 @@ public class PlayerController : NetworkBehaviour
             
         NetworkServer.Spawn(littleBlob);
         Debug.Log("after NetworkServer.Spawn(LittleBlob)");
+    }
+
+    [Command]
+    void CmdSpawnLittleBlobYellow(Vector3 spawnPositionOfLittleBlob) {
+        Debug.Log("in CmdSpawnLittleBlobYellow");
+        var spawnPosition = spawnPositionOfLittleBlob;
+
+        var spawnRotation = Quaternion.Euler( 
+            0.0f, 
+            0.0f, 
+            0.0f);
+  
+        var littleBlobYellow = (GameObject)Instantiate(littleBlobSpawnYellow, spawnPosition, spawnRotation);
+            
+        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
+        // littleBlob.transform.localScale = newScale; 
+        // littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
+        // Debug.Log("now magenta");
+            
+        NetworkServer.Spawn(littleBlobYellow);
+        Debug.Log("after NetworkServer.Spawn(LittleBlob Yellow)");
     }
 
     public override void OnStartLocalPlayer()

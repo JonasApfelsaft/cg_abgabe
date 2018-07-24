@@ -15,6 +15,7 @@ TagManager:
   - Clone
   - wall
   - playingField
+  - LittleBlobSpawnYellow
   layers:
   - Default
   - TransparentFX
