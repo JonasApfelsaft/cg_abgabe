@@ -828,7 +828,7 @@ MonoBehaviour:
   littleBlobSpawner: {fileID: 1516140466}
   playerSingleplayerPrefab: {fileID: 1139498931281658, guid: 0f2aba6659d914513bbb344f6caaaa32,
     type: 2}
-  numberOfEnemies: 3
+  numberOfEnemies: 0
   numberOfLittleBlobs: 20
 --- !u!1 &527622271
 GameObject:

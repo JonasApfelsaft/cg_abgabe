@@ -22,6 +22,8 @@ public class PlayerMovement : MonoBehaviour {
 
 
     void Start () {
+        gameObject.tag="Player";
+
         enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
         littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawnerSingleplayer>(); 
         camera = Camera.main.GetComponent<FollowPlayer>();
@@ -37,7 +39,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void Update()
     {
-        
 
         float translation = Input.GetAxis("Vertical");
         float rot = Input.GetAxis("Horizontal");
@@ -45,28 +46,34 @@ public class PlayerMovement : MonoBehaviour {
         if (translation > 0) //move forwards
         {
             transform.Translate(0, 0, speed * Time.deltaTime);
+            translateClones(0, 0, -speed * Time.deltaTime);
         }
         else if (translation < 0) //move backwards
         {
             transform.Translate(0, 0, -speed * Time.deltaTime);
+            translateClones(0, 0, speed * Time.deltaTime);
         }
 
         if (rot > 0) //turn right
         {
             transform.Rotate(0, rotationSpeed * Time.deltaTime, 0);
+            rotateClones(rotationSpeed);
         }
         else if (rot < 0) //turn left   
         {
             transform.Rotate(0, -rotationSpeed * Time.deltaTime, 0);
+            rotateClones(-rotationSpeed);
         }
 
         if(Input.GetKey(KeyCode.Z)) //move upwards
         {
             transform.Translate(0, speed / 2 * Time.deltaTime, 0);
+            translateClones(0, speed / 2 * Time.deltaTime, 0);
         }
         else if (Input.GetKey(KeyCode.H)) //move downwards
         {
             transform.Translate(0, -speed / 2  * Time.deltaTime, 0);
+            translateClones(0, -speed / 2 * Time.deltaTime, 0);
         }
 
         if(Input.GetKeyDown(KeyCode.Space))
@@ -79,15 +86,55 @@ public class PlayerMovement : MonoBehaviour {
         
     }
 
+    private void translateClones(float x, float y, float z) {
+        var clones = GameObject.FindGameObjectsWithTag("Clone");
+
+        for (int i = 0; i < clones.Length; i++) {
+            clones[i].transform.Translate(x, y, z);
+        }
+    }
+
+    private void rotateClones(float speed) {
+        var clones = GameObject.FindGameObjectsWithTag("Clone");
+        var player = GameObject.FindWithTag("Player").transform;
+        
+        for (int i = 0; i < clones.Length; i++) {
+            // rotate clone around original player which is the object on the left of the row
+            clones[i].transform.RotateAround(transform.position, player.up, speed * Time.deltaTime);
+        }
+    }
+
+
+
     void split()
     {
-        transform.localScale = transform.localScale / 2; 
-        GameObject playerClone = Instantiate(gameObject);        
-        playerClone.transform.Translate(transform.localScale.x, 0, 0);
-        playerClone.tag="Clone";
-        calculateSpeed(); 
-        mergeTime=5.0f; 
+        var currentClones = GameObject.FindGameObjectsWithTag("Clone");
 
+        // Scale player
+        transform.localScale = transform.localScale / 2;
+        // Scale clones
+        for (int i = 0; i < currentClones.Length; i++) {
+            currentClones[i].transform.localScale = currentClones[i].transform.localScale / 2;
+            // position current clones
+            currentClones[i].transform.Translate(-transform.localScale.x * (i + 1), 0, 0);
+        }
+        
+        var xOffsetNewClones = (currentClones.Length + 1) * transform.localScale.x;
+        // Instantiate new clones (one per current clone + player)
+        for (int i = 0; i < currentClones.Length + 1; i++) {
+            GameObject newClone = Instantiate(gameObject);
+            newClone.tag = "Clone";
+            Debug.Log("Clone erstellt mit Tag: " + newClone.tag);
+            // position new clones
+            newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
+
+            // Spawn the newClone on the Clients
+            // NetworkServer.Spawn(newClone);
+        }
+
+        calculateSpeed();
+        mergeTime = 5.0f;
+        Debug.Log("aktuell:" + mergeTime); 
     }
 
     void checkIfMerge() 
@@ -95,7 +142,8 @@ public class PlayerMovement : MonoBehaviour {
         if(mergeTime<=0.0f && mergeTime>-0.5f){
             merge(); 
         } else if(mergeTime!=-1.0f){
-            mergeTime-=Time.deltaTime; 
+            mergeTime-=Time.deltaTime;
+            Debug.Log("aktuell:" + mergeTime); 
         }
     }
     
