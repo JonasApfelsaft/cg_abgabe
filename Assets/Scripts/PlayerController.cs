@@ -229,25 +229,12 @@ public class PlayerController : NetworkBehaviour
         {
             //status.scoreAbsorbedLittleBlob();
             // scaleUp(other.gameObject.transform.localScale.y);  
-            scaleUp(1.5f);
-
-            // TODO: player der mit neuem blob collidet wird zu ballon
-            // old: littleBlobSpawnerScript.createLittleBlob(1);
-
-            // spawn Position
-            // wurde immer an gleiche Stelle gespawnt
-            // var spawnPosition = new Vector3(
-            //                            other.gameObject.transform.localScale.x + 5, 
-            //                            other.gameObject.transform.localScale.y + 5,
-            //                            other.gameObject.transform.localScale.z + 5);
+            scaleUp(0.39f);
 
             var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
-            // oder eher: destroy
             other.gameObject.SetActive(false);
-            // Destroy(other.gameObject);
-
-
+            
             // destroy over network
            // CmdDestroy(other.gameObject);
 
