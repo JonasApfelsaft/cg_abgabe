@@ -11,23 +11,14 @@ public class PlayerController : NetworkBehaviour
     float slerpTime = 0.5f;
     float mergeTime = -1.0f;
     FollowPlayer followPlayer; 
-    public GameObject enemySpawner; 
-    public GameObject littleBlobSpawner;  
     
-    EnemySpawner enemySpawnerScript; 
-    LittleBlobSpawner littleBlobSpawnerScript; 
-    
-    // attempt to make splitting work for networking
     public GameObject playerSplitPrefab;
     List<GameObject> playerSplits = new List<GameObject>();
     
     Rigidbody rb;
     System.Random random = new System.Random();
-
-
-    public GameObject littleBlobToSpawn;
+    
     public GameObject littleBlobSpawnYellow;
-
 
     void Start () {
         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().player = this.gameObject; 
@@ -43,9 +34,6 @@ public class PlayerController : NetworkBehaviour
         {
             return;
         }
-
-        enemySpawnerScript = enemySpawner.GetComponent<EnemySpawner>(); 
-        littleBlobSpawnerScript = littleBlobSpawner.GetComponent<LittleBlobSpawner>(); 
 
         if (transform.localScale.x >= 9) {
             won();
@@ -165,7 +153,6 @@ public class PlayerController : NetworkBehaviour
             if (isLocalPlayer) {
                 newSplit.GetComponent<MeshRenderer>().material.color = Color.blue;
             }
-            // newSplit.GetComponent<MeshRenderer>().material.color = Color.blue;
 
             // add new split to list
             playerSplits.Add(newSplit);
@@ -283,38 +270,6 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    void CmdDestroy(GameObject go) {
-        Debug.Log("in CmdDestroy");
-        go.SetActive(false);
-        // NetworkServer.Destroy(go);
-        
-        // removes object but does not delete it on server
-        // NetworkServer.UnSpawn(go);
-
-    }
-
-    [Command]
-    void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
-        Debug.Log("in CmdSpawnLittleBlob");
-        var spawnPosition = spawnPositionOfLittleBlob;
-
-        var spawnRotation = Quaternion.Euler( 
-            0.0f, 
-            0.0f, 
-            0.0f);
-  
-        var littleBlob = (GameObject)Instantiate(littleBlobToSpawn, spawnPosition, spawnRotation);
-            
-        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
-        // littleBlob.transform.localScale = newScale; 
-        littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
-        Debug.Log("now magenta");
-            
-        NetworkServer.Spawn(littleBlob);
-        Debug.Log("after NetworkServer.Spawn(LittleBlob)");
-    }
-
-    [Command]
     void CmdSpawnLittleBlobYellow(Vector3 spawnPositionOfLittleBlob) {
         Debug.Log("in CmdSpawnLittleBlobYellow");
         var spawnPosition = spawnPositionOfLittleBlob;
@@ -325,12 +280,7 @@ public class PlayerController : NetworkBehaviour
             0.0f);
   
         var littleBlobYellow = (GameObject)Instantiate(littleBlobSpawnYellow, spawnPosition, spawnRotation);
-            
-        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
-        // littleBlob.transform.localScale = newScale; 
-        // littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
-        // Debug.Log("now magenta");
-            
+                        
         NetworkServer.Spawn(littleBlobYellow);
         Debug.Log("after NetworkServer.Spawn(LittleBlob Yellow)");
     }
@@ -354,7 +304,6 @@ public class PlayerController : NetworkBehaviour
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         
-        // TODO does not work any more
         if (isLocalPlayer) {
             adaptCameraOffset(1 + size/4); 
         }

@@ -11,13 +11,10 @@ public class PlayerSplitController : NetworkBehaviour {
     public GameObject enemySpawner; 
     public GameObject littleBlobSpawner; 
 
-
-    // start oder update...    public Vector3 scale = transform.localScale;
-    
     EnemySpawner enemySpawnerScript; 
     LittleBlobSpawner littleBlobSpawnerScript;
 
-    public GameObject littleBlobToSpawn;
+    public GameObject littleBlobSpawnYellow;
 
 
 	// Use this for initialization
@@ -31,38 +28,24 @@ public class PlayerSplitController : NetworkBehaviour {
 
 	void OnTriggerEnter(Collider other)
     {
-        // TODO den Fall gibt es im Multiplayer Modus nicht mehr
-        if (other.gameObject.CompareTag("Collectable"))
+
+        if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow"))
         {
-            if(transform.localScale.x>other.transform.localScale.x){
-                other.gameObject.SetActive(false);
-                //status.scoreKilledOtherPlayer(5);
-                scaleUp(other.gameObject.transform.localScale.y*0.7f); 
-                enemySpawnerScript.createEnemy(1);  
-            }
-            else {
-                // player is dead
-                // lostMenuUI.SetActive(true);
-                // CmdRespawn();
-            }
-        }
-        else if (other.gameObject.CompareTag("LittleBlob"))
-        {
-            scaleUp(other.gameObject.transform.localScale.y);  
+            scaleUp(0.39f);  
             
-            var spawnPosition = (other.gameObject.transform.position * 0.2f);
+            var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
             // oder eher: destroy
             other.gameObject.SetActive(false);
 
-            if (!isLocalPlayer)
-            {
-                return;
-            }
+            //if (!isLocalPlayer)
+            //{
+            //    return;
+            //}
             
             Debug.Log("after isLocalPlayer");
 
-            CmdSpawnLittleBlob(spawnPosition);
+            CmdSpawnLittleBlobYellow(spawnPosition);
         } 
         else if (other.gameObject.CompareTag("Player"))
         {
@@ -95,8 +78,8 @@ public class PlayerSplitController : NetworkBehaviour {
     }
 
     [Command]
-    void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
-        Debug.Log("in CmdSpawnLittleBlob");
+    void CmdSpawnLittleBlobYellow(Vector3 spawnPositionOfLittleBlob) {
+        Debug.Log("in CmdSpawnLittleBlobYellow im Split");
         var spawnPosition = spawnPositionOfLittleBlob;
 
         var spawnRotation = Quaternion.Euler( 
@@ -104,14 +87,9 @@ public class PlayerSplitController : NetworkBehaviour {
             0.0f, 
             0.0f);
   
-        var littleBlob = (GameObject)Instantiate(littleBlobToSpawn, spawnPosition, spawnRotation);
-            
-        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
-        // littleBlob.transform.localScale = newScale; 
-        littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
-        Debug.Log("now magenta");
-            
-        NetworkServer.Spawn(littleBlob);
-        Debug.Log("after NetworkServer.Spawn(LittleBlob)");
+        var littleBlobYellow = (GameObject)Instantiate(littleBlobSpawnYellow, spawnPosition, spawnRotation);
+                        
+        NetworkServer.Spawn(littleBlobYellow);
+        Debug.Log("after NetworkServer.Spawn(LittleBlob Yellow)");
     }
 }
