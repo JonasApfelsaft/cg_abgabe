@@ -99,7 +99,6 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     private void findLittleBlob() { 
-        //Debug.Log("littleBlob");
         blobs = GameObject.FindGameObjectsWithTag("LittleBlob"); 
         float closest=1000; 
         float dist; 
@@ -137,13 +136,7 @@ public class EnemyBehaviour : MonoBehaviour
         else if(other.gameObject.CompareTag("Player")){
             if(transform.localScale.x>other.gameObject.transform.localScale.x){
 
-                //TODO: Notify Player that he lost
-               
-                // new: lostMenuUI.SetActive(true); 
-
                 RpcScaleUp(other.gameObject.transform.localScale.x);
-                
-                // new: Destroy(other.gameObject); 
                 calculateSpeed(); 
             }
            
@@ -152,7 +145,6 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void RpcScaleUp(float size)
     {
-        // scale up player
         Vector3 newScale = new Vector3(transform.localScale.x + size, transform.localScale.y + size, transform.localScale.z + size);
         transform.localScale = Vector3.Slerp(transform.localScale, newScale, slerpTime); 
         calculateSpeed();

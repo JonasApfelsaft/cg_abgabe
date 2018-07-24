@@ -35,13 +35,7 @@ public class PlayerSplitController : NetworkBehaviour {
             
             // var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
-            // oder eher: destroy
-            // other.gameObject.SetActive(false);
-
             //if (!isLocalPlayer)
-            //{
-            //    return;
-            //}
             
             Debug.Log("after isLocalPlayer");
 

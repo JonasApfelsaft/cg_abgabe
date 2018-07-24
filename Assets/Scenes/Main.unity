@@ -792,8 +792,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9409d939c5c3c4923a78247d73f4de34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lostMenuUI: {fileID: 1471285264}
+  singleOrMultiplayer: {fileID: 903431306}
+  ip: 
+  port: 0
   pauseMenuUI: {fileID: 1098506651}
-  player: {fileID: 1135495360739748, guid: f22c37516eae14e68a68ae6d1cbeead6, type: 2}
+  player: {fileID: 903431306}
 --- !u!114 &386340075
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -23,10 +23,7 @@ public class MainMenu : MonoBehaviour {
                 inputField = g.GetComponent<InputField>();
             }
         }
-		//inputField = GameObject.FindGameObjectWithTag("ipInput").GetComponent<InputField>();
-		//inputField.contentType = InputField.ContentType.IntegerNumber; 
 		ipInput = inputField.transform.Find("Text").gameObject.GetComponent<Text>(); 
-		//ipInput = inputField.GetComponent<Text>(); 
 		port = 3000; 
 		NetworkManager.singleton.networkPort = port; 
 		go = Resources.FindObjectsOfTypeAll<GameObject>();
@@ -44,6 +41,7 @@ public class MainMenu : MonoBehaviour {
 	}
 	
 	public void hostGame(){
+		NetworkServer.Reset();
 		NetworkManager.singleton.networkPort = port; 
 		NetworkManager.singleton.StartHost(); 
 		mainMenuUI.SetActive(false); 

@@ -46,13 +46,11 @@ public class PlayerMovement : MonoBehaviour {
         if (translation > 0) //move forwards
         {
             transform.Translate(0, 0, speed * Time.deltaTime);
-            //rb.MovePosition(transform.position + new Vector3(0, 0, speed*Time.deltaTime));
             translateClones(0, 0, -speed * Time.deltaTime);
         }
         else if (translation < 0) //move backwards
         {
             transform.Translate(0, 0, -speed * Time.deltaTime);
-            //rb.MovePosition(transform.position + new Vector3(0, 0, -speed*Time.deltaTime));
             translateClones(0, 0, speed * Time.deltaTime);
         }
 
@@ -136,11 +134,8 @@ public class PlayerMovement : MonoBehaviour {
         for (int i = 0; i < currentClones.Length + 1; i++) {
             GameObject newClone = Instantiate(transform.gameObject);
             newClone.tag = "Clone";
-            Destroy(newClone.GetComponent<PlayerMovement>());
-
             //add script
-
-            Debug.Log("Clone erstellt mit Tag: " + newClone.tag);
+            Destroy(newClone.GetComponent<PlayerMovement>());
             // position new clones
             newClone.transform.Translate(xOffsetNewClones + transform.localScale.x * i, 0, 0);
             Debug.Log(newClone.tag);
@@ -190,7 +185,6 @@ public class PlayerMovement : MonoBehaviour {
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
             other.gameObject.SetActive(false);
-            //status.scoreAbsorbedLittleBlob();
             littleBlobSpawnerScript.createLittleBlob(1);
             scaleUp(other.gameObject.transform.localScale.y);  
         }  

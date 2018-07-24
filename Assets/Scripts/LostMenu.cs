@@ -110,11 +110,11 @@ public class LostMenu : MonoBehaviour {
 
 	public void backToMainMenu(){
 		if (multiplayer){
-			//END CONNECTION IF CLIENT 
-			//IF HOST END CONNECTION AND SHOW ALL CLIENTS MAIN MENU 
 			if(Network.isServer){
-				NetworkServer.Shutdown(); 
+				NetworkManager.singleton.StopClient(); 
 				NetworkManager.singleton.StopHost(); 
+				NetworkManager.singleton.StopMatchMaker(); 
+				Network.Disconnect(); 
 			} else {
 				NetworkManager.singleton.StopClient(); 
 			}
