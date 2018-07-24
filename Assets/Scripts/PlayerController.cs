@@ -209,7 +209,7 @@ public class PlayerController : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow")
+        if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow"))
         {
             //status.scoreAbsorbedLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
@@ -239,23 +239,27 @@ public class PlayerController : NetworkBehaviour
             // CmdSpawnLittleBlob(spawnPosition);
 
             CmdSpawnLittleBlobYellow(spawnPosition);
-        } 
-        else if (other.gameObject.CompareTag("Player"))
+        }else if (other.gameObject.CompareTag("Player"))
         {
-            if(transform.localScale.x>other.transform.localScale.x){
-                //TO DO
-                //call method to let player know he died --> show menu with options respawn and exit
-                //other.getComponent<PlayerController>().died();
-                //other.gameObject.SetActive(false);
-                scaleUp(other.gameObject.transform.localScale.y);
+            if(isLocalPlayer){
+                if(transform.localScale.x>other.transform.localScale.x){
+                    //TO DO
+                    //call method to let player know he died --> show menu with options respawn and exit
+                    //other.getComponent<PlayerController>().died();
+                    other.gameObject.SetActive(false);
+                    scaleUp(other.gameObject.transform.localScale.y);
+                    Debug.Log("won");
+                }
+                else if (transform.localScale.x<other.transform.localScale.x){
+                    this.gameObject.SetActive(false);
+                    Debug.Log("lost");
+                    GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
+                    // player is dead
+                    // lostMenuUI.SetActive(true);
+                    // RpcRespawn();
+                }  
             }
-            else {
-                this.gameObject.SetActive(false);
-                GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
-                // player is dead
-                // lostMenuUI.SetActive(true);
-                // RpcRespawn();
-            }   
+             
         }
     }
 

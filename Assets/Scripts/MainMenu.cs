@@ -56,7 +56,7 @@ public class MainMenu : MonoBehaviour {
 		// }
 		
 		// NetworkManager.singleton.StartClient(); 
-		// minimap.SetActive(true);
+	    minimap.SetActive(true);
 		mainMenuUI.SetActive(false); 
 	}
 

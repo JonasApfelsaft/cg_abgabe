@@ -10,8 +10,10 @@ public class LostMenu : MonoBehaviour {
 	private SingleOrMultiplayer singleOrMultiplayerScript; 
 	private GameObject minimap; 
 	private GameObject playingField; 
+	private bool multiplayer; 
 
 	public void Start() {
+		multiplayer = false; 
 		singleOrMultiplayerScript = GameObject.FindGameObjectWithTag("Canvas").GetComponent<SingleOrMultiplayer>(); 
 		GameObject[] go = Resources.FindObjectsOfTypeAll<GameObject>();
         foreach(GameObject g in go){
@@ -33,7 +35,6 @@ public class LostMenu : MonoBehaviour {
 	public void openLostMenuMultiplayerWithRespawn() {
 		lostMenuUI.SetActive(true); 
 		minimap.SetActive(false);
-		Time.timeScale = 0f;
 		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "RETRY?";
 	}
 
