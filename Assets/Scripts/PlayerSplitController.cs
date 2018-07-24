@@ -14,7 +14,7 @@ public class PlayerSplitController : NetworkBehaviour {
     EnemySpawner enemySpawnerScript; 
     LittleBlobSpawner littleBlobSpawnerScript;
 
-    public GameObject littleBlobSpawnYellow;
+    public GameObject littleBlobSpawn;
 
 
 	// Use this for initialization
@@ -29,14 +29,14 @@ public class PlayerSplitController : NetworkBehaviour {
 	void OnTriggerEnter(Collider other)
     {
 
-        if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow"))
+        if (other.gameObject.CompareTag("LittleBlob"))
         {
-            scaleUp(0.39f);  
+            // scaleUp(0.39f);  
             
-            var spawnPosition = (other.gameObject.transform.position * 1.7f);
+            // var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
             // oder eher: destroy
-            other.gameObject.SetActive(false);
+            // other.gameObject.SetActive(false);
 
             //if (!isLocalPlayer)
             //{
@@ -45,7 +45,7 @@ public class PlayerSplitController : NetworkBehaviour {
             
             Debug.Log("after isLocalPlayer");
 
-            CmdSpawnLittleBlobYellow(spawnPosition);
+            // CmdSpawnLittleBlobYellow(spawnPosition);
         } 
         else if (other.gameObject.CompareTag("Player"))
         {
@@ -78,7 +78,7 @@ public class PlayerSplitController : NetworkBehaviour {
     }
 
     [Command]
-    void CmdSpawnLittleBlobYellow(Vector3 spawnPositionOfLittleBlob) {
+    void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
         Debug.Log("in CmdSpawnLittleBlobYellow im Split");
         var spawnPosition = spawnPositionOfLittleBlob;
 
@@ -87,9 +87,46 @@ public class PlayerSplitController : NetworkBehaviour {
             0.0f, 
             0.0f);
   
-        var littleBlobYellow = (GameObject)Instantiate(littleBlobSpawnYellow, spawnPosition, spawnRotation);
+        var littleBlobYellow = (GameObject)Instantiate(littleBlobSpawn, spawnPosition, spawnRotation);
                         
         NetworkServer.Spawn(littleBlobYellow);
         Debug.Log("after NetworkServer.Spawn(LittleBlob Yellow)");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
