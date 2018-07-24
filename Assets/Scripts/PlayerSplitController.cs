@@ -15,7 +15,10 @@ public class PlayerSplitController : NetworkBehaviour {
     // start oder update...    public Vector3 scale = transform.localScale;
     
     EnemySpawner enemySpawnerScript; 
-    LittleBlobSpawner littleBlobSpawnerScript; 
+    LittleBlobSpawner littleBlobSpawnerScript;
+
+    public GameObject littleBlobToSpawn;
+
 
 	// Use this for initialization
 	void Start () {
@@ -28,6 +31,7 @@ public class PlayerSplitController : NetworkBehaviour {
 
 	void OnTriggerEnter(Collider other)
     {
+        // TODO den Fall gibt es im Multiplayer Modus nicht mehr
         if (other.gameObject.CompareTag("Collectable"))
         {
             if(transform.localScale.x>other.transform.localScale.x){
@@ -45,9 +49,20 @@ public class PlayerSplitController : NetworkBehaviour {
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
             scaleUp(other.gameObject.transform.localScale.y);  
+            
+            var spawnPosition = (other.gameObject.transform.position * 0.2f);
+
+            // oder eher: destroy
             other.gameObject.SetActive(false);
-            //status.scoreAbsorbedLittleBlob();
-            littleBlobSpawnerScript.createLittleBlob(1);
+
+            if (!isLocalPlayer)
+            {
+                return;
+            }
+            
+            Debug.Log("after isLocalPlayer");
+
+            CmdSpawnLittleBlob(spawnPosition);
         } 
         else if (other.gameObject.CompareTag("Player"))
         {
@@ -77,5 +92,26 @@ public class PlayerSplitController : NetworkBehaviour {
         if(transform.localScale.x<5){
             speed = 4-transform.localScale.x;
         }
+    }
+
+    [Command]
+    void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
+        Debug.Log("in CmdSpawnLittleBlob");
+        var spawnPosition = spawnPositionOfLittleBlob;
+
+        var spawnRotation = Quaternion.Euler( 
+            0.0f, 
+            0.0f, 
+            0.0f);
+  
+        var littleBlob = (GameObject)Instantiate(littleBlobToSpawn, spawnPosition, spawnRotation);
+            
+        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
+        // littleBlob.transform.localScale = newScale; 
+        littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
+        Debug.Log("now magenta");
+            
+        NetworkServer.Spawn(littleBlob);
+        Debug.Log("after NetworkServer.Spawn(LittleBlob)");
     }
 }

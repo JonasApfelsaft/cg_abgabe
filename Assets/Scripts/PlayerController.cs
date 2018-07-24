@@ -208,6 +208,7 @@ public class PlayerController : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        // TODO den Fall gibt es im Multiplayer Modus nicht mehr
         if (other.gameObject.CompareTag("Collectable"))
         {
             if(transform.localScale.x>other.transform.localScale.x){
@@ -224,20 +225,23 @@ public class PlayerController : NetworkBehaviour
         }
         else if (other.gameObject.CompareTag("LittleBlob"))
         {
-            other.gameObject.SetActive(false);
             //status.scoreAbsorbedLittleBlob();
             scaleUp(other.gameObject.transform.localScale.y);  
             
-            // TODO 
-            // NullReferenceException: Object reference not set to an instance of an object
-            // PlayerController.OnTriggerEnter (UnityEngine.Collider other) (at Assets/Scripts/PlayerController.cs:244)
+            // TODO: player der mit neuem blob collidet wird zu ballon
             // old: littleBlobSpawnerScript.createLittleBlob(1);
 
             // spawn Position
-            var spawnPosition = new Vector3(
-                                        other.gameObject.transform.localScale.x + 5, 
-                                        other.gameObject.transform.localScale.y + 5,
-                                        other.gameObject.transform.localScale.z + 5);
+            // wurde immer an gleiche Stelle gespawnt
+            // var spawnPosition = new Vector3(
+            //                            other.gameObject.transform.localScale.x + 5, 
+            //                            other.gameObject.transform.localScale.y + 5,
+            //                            other.gameObject.transform.localScale.z + 5);
+
+            var spawnPosition = (other.gameObject.transform.position * 0.2f);
+
+            // oder eher: destroy
+            other.gameObject.SetActive(false);
 
             if (!isLocalPlayer)
             {
@@ -273,13 +277,7 @@ public class PlayerController : NetworkBehaviour
 
     [Command]
     void CmdSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
-        RpcSpawnLittleBlob(spawnPositionOfLittleBlob);
-    }
-
-    [ClientRpc]
-    void RpcSpawnLittleBlob(Vector3 spawnPositionOfLittleBlob) {
         Debug.Log("in CmdSpawnLittleBlob");
-
         var spawnPosition = spawnPositionOfLittleBlob;
 
         var spawnRotation = Quaternion.Euler( 
@@ -289,9 +287,10 @@ public class PlayerController : NetworkBehaviour
   
         var littleBlob = (GameObject)Instantiate(littleBlobToSpawn, spawnPosition, spawnRotation);
             
-        Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
-        littleBlob.transform.localScale = newScale; 
+        // Vector3 newScale = new Vector3(littleBlob.transform.localScale.x * 5, littleBlob.transform.localScale.y * 5, littleBlob.transform.localScale.z * 5);
+        // littleBlob.transform.localScale = newScale; 
         littleBlob.GetComponent<MeshRenderer>().material.color = Color.magenta;
+        Debug.Log("now magenta");
             
         NetworkServer.Spawn(littleBlob);
         Debug.Log("after NetworkServer.Spawn(LittleBlob)");

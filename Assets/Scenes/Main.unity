@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.044414923, g: 0.041873932, b: 0.045860372, a: 1}
+  m_IndirectSpecularColor: {r: 0.043458275, g: 0.041858114, b: 0.04489567, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1397,10 +1397,9 @@ MonoBehaviour:
   m_OfflineScene: 
   m_OnlineScene: 
   m_SpawnPrefabs:
-  - {fileID: 1833439839105294, guid: b96cb918135664dbbac170f754721b49, type: 2}
   - {fileID: 1748556116134920, guid: 3dbdc775d502941ceb21eb053d4db434, type: 2}
   - {fileID: 1888242905079988, guid: 252cf62fbceb6486ca168a271b77313d, type: 2}
-  m_CustomConfig: 0
+  m_CustomConfig: 1
   m_MaxConnections: 4
   m_ConnectionConfig:
     m_PacketSize: 1440
@@ -1442,7 +1441,7 @@ MonoBehaviour:
     m_MaxTimerTimeout: 12000
     m_MinNetSimulatorTimeout: 1
     m_MaxNetSimulatorTimeout: 12000
-  m_Channels: 
+  m_Channels: 0500000000000000
   m_UseWebSockets: 0
   m_UseSimulator: 0
   m_SimulatedLatency: 1
