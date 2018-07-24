@@ -15,6 +15,7 @@ public class MainMenu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
 		GameObject canvas = GameObject.FindGameObjectWithTag("Canvas");
         GameObject[] go= Resources.FindObjectsOfTypeAll<GameObject>();
         foreach(GameObject g in go){
@@ -43,21 +44,29 @@ public class MainMenu : MonoBehaviour {
 	}
 	
 	public void hostGame(){
+		NetworkManager.singleton.networkPort = port; 
 		NetworkManager.singleton.StartHost(); 
 		mainMenuUI.SetActive(false); 
 		minimap.SetActive(true);
 	}
 
 	public void joinGame(){
-		// if(ipInput.text == null){
-		//	NetworkManager.singleton.networkAddress = "127.0.0.1"; 
-		// } else {
-		//	NetworkManager.singleton.networkAddress = ipInput.text.ToString(); 
-		// }
-		
-		// NetworkManager.singleton.StartClient(); 
-	    minimap.SetActive(true);
-		mainMenuUI.SetActive(false); 
+		if(ipInput.text =="localhost"){
+			NetworkManager.singleton.networkAddress = "127.0.0.1"; 
+		} else {
+			NetworkManager.singleton.networkAddress = ipInput.text.ToString(); 
+		}
+		NetworkManager.singleton.networkPort = port; 
+		var success = NetworkManager.singleton.StartClient();
+        if (success == null)
+        {
+			minimap.SetActive(true);
+			mainMenuUI.SetActive(false); 
+            
+        }else {
+			
+		}
+	    
 	}
 
 	 public void Back()
