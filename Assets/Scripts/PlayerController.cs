@@ -227,7 +227,12 @@ public class PlayerController : NetworkBehaviour
             var spawnPosition = (other.gameObject.transform.position * 1.7f);
 
             // oder eher: destroy
-            other.gameObject.SetActive(false);
+            // other.gameObject.SetActive(false);
+            // Destroy(other.gameObject);
+
+
+            // destroy over network
+            CmdDestroy(other.gameObject);
 
             if (!isLocalPlayer)
             {
@@ -267,6 +272,11 @@ public class PlayerController : NetworkBehaviour
         if(transform.localScale.x<5){
             speed = 7-transform.localScale.x;
         }
+    }
+
+    [Command]
+    void CmdDestroy(GameObject go) {
+        NetworkServer.Destroy(go);
     }
 
     [Command]
