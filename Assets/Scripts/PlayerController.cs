@@ -93,7 +93,8 @@ public class PlayerController : NetworkBehaviour
             CmdSplit(); 
         }
 
-        checkIfMerge();         
+        checkIfMerge();      
+        checkIfWonOrLost();    
     }
 
     [Command]
@@ -208,6 +209,20 @@ public class PlayerController : NetworkBehaviour
         mergeTime=-1.0f; 
     }
 
+    void checkIfWonOrLost() {
+        if(this.transform.localScale.x>=6.5f){
+            GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openWonMenuMultiplayerWithoutRespawn();
+        } else {
+            var players = GameObject.FindGameObjectsWithTag("Player"); 
+            foreach (GameObject player in players)
+            {
+                if(player.transform.localScale.x>=6.5f){
+                    GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithoutRespawn();
+                }
+            }
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("LittleBlob") || other.gameObject.CompareTag("LittleBlobSpawnYellow"))
@@ -241,7 +256,6 @@ public class PlayerController : NetworkBehaviour
             //     return;
             // }
             
-            Debug.Log("after isLocalPlayer");
 
             // CmdSpawnLittleBlob(spawnPosition);
 
@@ -261,11 +275,11 @@ public class PlayerController : NetworkBehaviour
                     this.gameObject.SetActive(false);
                     Debug.Log("lost");
                     
-                    if(!Network.isServer && Network.isClient){
+                    if(!Network.isServer){
                         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithRespawn();
-                    }else if(Network.isClient && Network.isServer){
+                    }
+                    if(!Network.isClient){
                         GameObject.FindGameObjectWithTag("Canvas").GetComponent<LostMenu>().openLostMenuMultiplayerWithoutRespawn();
-                        Debug.Log("SERVER"); 
                     } 
                     
                 }  

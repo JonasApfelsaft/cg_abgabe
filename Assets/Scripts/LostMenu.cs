@@ -39,7 +39,6 @@ public class LostMenu : MonoBehaviour {
 	}
 
 	public void openLostMenuMultiplayerWithRespawn() {
-		Debug.Log("Client"); 
 		multiplayer = true; 
 		lostMenuUI.SetActive(true); 
 		minimap.SetActive(false);
@@ -48,12 +47,20 @@ public class LostMenu : MonoBehaviour {
 	}
 
 	public void openLostMenuMultiplayerWithoutRespawn() {
-		Debug.Log("Server"); 
 		multiplayer = true; 
 		lostMenuUI.SetActive(true); 
 		minimap.SetActive(false);
 		respawnBtn.SetActive(false);
-		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "RETRY?";
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "GAME OVER";
+	}
+
+	public void openWonMenuMultiplayerWithoutRespawn(){
+		multiplayer = true; 
+		lostMenuUI.SetActive(true);
+		minimap.SetActive(false);
+		Time.timeScale = 0f;
+		respawnBtn.SetActive(false);
+		GameObject.FindGameObjectWithTag("lostMenuText").GetComponent<Text>().text = "YOU WON";
 	}
 
 	public void openWonMenu(){
